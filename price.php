@@ -132,7 +132,7 @@ top_menu.style.color = "White";
             <div class="col-lg-12">
                  <h4 class="p_list">Mỗi GB dữ liệu: 30.000 VND / Tháng</h4>
 				 <h4 class="p_list">Nâng cấp gói: chỉ áp dụng cho gói nhỏ chuyển sang gói lớn hơn cùng thời gian. Thời gian sử dụng còn lại của gói cũ sẽ được tính ra tiền theo phương pháp bình quân và cấn trừ vào giá thành gói mới. Gói mới sẽ được ghi nhận lại từ đầu.</h4>
-				 <h4 class="p_list">Cài đặt riêng hệ thống INCO trên Server của công ty bạn: 5.000.000 VND / tháng</h4>
+				 <h4 class="p_list">Cài đặt riêng hệ thống INCO trên Server của công ty bạn: 2.000.000 VND / tháng</h4>
             </div>
         </div>
 		
