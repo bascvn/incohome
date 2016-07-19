@@ -19,7 +19,9 @@ top_menu.style.color = "White";
 	 
    
    //echo 'Đã Thoát';
-   header('Refresh: 2; URL = signin.php');
+   //header('Refresh: 2; URL = signin.php');
+    header("Location: signin.php");
+	die();
 ?>
 	<p ><h1 >Đã Thoát</h1></p>	
 <?php
