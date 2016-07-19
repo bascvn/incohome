@@ -32,6 +32,7 @@
 
 	
 <?php
+require_once 'common.php';
 
 ob_start();
 session_start();

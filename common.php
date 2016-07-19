@@ -1,17 +1,26 @@
-<?php 
+﻿<?php 
 
 	require_once('PHPMailer/PHPMailerAutoload.php');
 	
 	 define("PRE_LENGTH",      2); 
 	 define("POST_LENGTH",     3);
 	 define("ASCII_DELTA",     9); 	
+	 
+	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
+	 
          
-
+	
+	//======================================================================================
+    function cm_get_server_uri(){
+		$actual_link = SRV_PROTOCOL."$_SERVER[HTTP_HOST]/";
+		return $actual_link;
+	}
+	
 	//======================================================================================
     function cm_connect(){
 		
 		// Create connection
-		 $con=mysqli_connect('127.0.0.1','malevia','!qazxsw23edc','maleviadb');
+		 $con=mysqli_connect('127.0.0.1','root','12345','IncoClient');
 
 
 		// Check connection
@@ -43,6 +52,7 @@
     function cm_send_mail($toArr,$subject,$content){
 		
 		$mail = new PHPMailer(); // create a new object
+		$mail->CharSet = 'UTF-8';
 		$mail->IsSMTP(); // enable SMTP
 		$mail->SMTPDebug = 0; // debugging: 1 = errors and messages, 2 = messages only
 		$mail->SMTPAuth = true; // authentication enabled
@@ -50,9 +60,9 @@
 		$mail->Host = "smtp.gmail.com";
 		$mail->Port = 465; // or 587
 		$mail->IsHTML(true);
-		$mail->Username = "malevia.noreply@gmail.com";
-		$mail->Password = "maleviaTest";
-		$mail->SetFrom("malevia.noreply@gmail.com");
+		$mail->Username = "basc.noreply@gmail.com";
+			$mail->Password = "loveviet2007";
+			$mail->SetFrom("basc.noreply@gmail.com");
 
 		$mail->Subject = $subject;
 		$mail->Body = $content;
@@ -82,17 +92,17 @@
 	//======================================================================================
     function cm_get_forgot_password_mail_template(){
 	
-		$content = "Hi [%firstname%],<br/><br/>";
+		$content = "Xin chào [%clientname%],<br/><br/>";
 
-		$content .= "Click the link below to reset your password:<br/>";
-		$content .= '<a href="[%reset_password_link%]">Password Reset</a><br/><br/>';
+		$content .= "Vui lòng click vào link dưới để đổi password trên kiemtraduan.net:<br/>";
+		$content .= '<a href="[%reset_password_link%]">Đổi Password</a><br/><br/>';
 		
-		$content .= "If you didn't request this change or if you now remember your password:<br/>";
-		$content .= '<a href="[%clear_reset_password_link%]">Cancel this Password Reset</a><br/><br/>';
+		$content .= "Nếu bạn không yêu cầu đổi password hoặc đã nhớ nó:<br/>";
+		$content .= '<a href="[%clear_reset_password_link%]">Xóa yêu cầu đổi Password</a><br/><br/>';
 
-		$content .="If you have any questions. please contact us at <a href=\"mailto:support@malevia.com\">support@malevia.com</a> or visit <a=href=\"http://support.malevia.com\">support.malevia.com</a><br/>";
+		$content .="If you have any questions. please contact us at <a href=\"mailto:support@bansac.vn\">support@bansac.vn</a> or visit <a=href=\"http://www.bansac.vn\">www.bansac.vn</a><br/>";
 		$content .="Thanks!<br/>";
-		$content .="The Malevia Support Team<br/>";
+		$content .="The Bansac Support Team<br/>";
 		
 		return $content;
 	}

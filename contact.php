@@ -60,43 +60,15 @@ include('template/header.php');
 		// If there are no errors, send the email
 		if (!$errName && !$errEmail && !$errMessage && !$errHuman) {
 			
-			
-			require_once('PHPMailer/PHPMailerAutoload.php');
-
-
-			$mail = new PHPMailer(); // create a new object
-			$mail->IsSMTP(); // enable SMTP
-			$mail->SMTPDebug = 0; // debugging: 1 = errors and messages, 2 = messages only
-			$mail->SMTPAuth = true; // authentication enabled
-			$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-			$mail->Host = "smtp.gmail.com";
-			$mail->Port = 465; // or 587
-			$mail->IsHTML(true);
-			$mail->Username = "basc.noreply@gmail.com";
-			$mail->Password = "loveviet2007";
-			$mail->SetFrom("basc.noreply@gmail.com");
-
-			$mail->Subject = $subject;
-			$mail->Body = $body;
-			$mail->AddAddress("support@bansac.vn");
-			 if(!$mail->Send())
-			{
+			$toArr = array("support@bansac.vn");
+			$return_data = cm_send_mail($toArr,$subject,$body);
+			if(strpos($return_data,"200")<0){
 				$result='<div class="alert alert-danger">Xin lỗi, hệ thống mail của chúng tôi đang bị trục trặc, bạn vui lòng thử lại.</div>';
 			}
 			else
 			{
 				$result='<div class="alert alert-success">Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.</div>';
 			}
-
-			
-			//echo $body;
-			/*
-			if (mail ($to, $subject, $body, $from)) {
-				$result='<div class="alert alert-success">Thank You! I will be in touch</div>';
-			} else {
-				$result='<div class="alert alert-danger">Sorry there was an error sending your message. Please try again later.</div>';
-			}
-			*/
 		}
 	}
 	
