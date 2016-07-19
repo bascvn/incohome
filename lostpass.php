@@ -40,7 +40,7 @@ include('template/header.php');
 		{
 			 cm_close_connect($db);
 			//echo '{"code":404, "message":"Your email was not found in the system"}';
-			echo "Không tìm thấy email của bạn trong hệ thống";
+			echo "<p><h4>Không tìm thấy email của bạn trong hệ thống</h4></p>";
 			
 		}else{
 			$to = array($ContactEmail);
@@ -64,7 +64,7 @@ include('template/header.php');
 			 cm_close_connect($db);
 			$return_data = cm_send_mail($to,$subject,$content);
 			
-			echo "Đã gởi email đổi password cho bạn.";
+			echo "<p><h4>Đã gởi email đổi password cho bạn.</h4></p>";
 		}
 
 	}else{

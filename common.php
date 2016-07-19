@@ -7,12 +7,12 @@
 	 define("ASCII_DELTA",     9); 	
 	 
 	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
+	 define("API_PATH", "inco/"); // this is used for DEV
 	 
-         
 	
 	//======================================================================================
     function cm_get_server_uri(){
-		$actual_link = SRV_PROTOCOL."$_SERVER[HTTP_HOST]/";
+		$actual_link = SRV_PROTOCOL."$_SERVER[HTTP_HOST]/".API_PATH;
 		return $actual_link;
 	}
 	
@@ -100,8 +100,8 @@
 		$content .= "Nếu bạn không yêu cầu đổi password hoặc đã nhớ nó:<br/>";
 		$content .= '<a href="[%clear_reset_password_link%]">Xóa yêu cầu đổi Password</a><br/><br/>';
 
-		$content .="If you have any questions. please contact us at <a href=\"mailto:support@bansac.vn\">support@bansac.vn</a> or visit <a=href=\"http://www.bansac.vn\">www.bansac.vn</a><br/>";
-		$content .="Thanks!<br/>";
+		$content .="Nếu có thắc mắc vui lòng liên hệ với chúng tôi theo email <a href=\"mailto:support@bansac.vn\">support@bansac.vn</a> or visit <a=href=\"http://www.bansac.vn\">www.bansac.vn</a><br/>";
+		$content .="Cảm ơn!<br/>";
 		$content .="The Bansac Support Team<br/>";
 		
 		return $content;
@@ -129,14 +129,14 @@
 	//======================================================================================
     function cm_get_send_new_pass_mail_template(){
 	
-		$content = "Hi [%firstname%],<br/><br/>";
+		$content = "Hi [%clientname%],<br/><br/>";
 
-		$content .= "your new password is: [%password%]<br/><br/>";
+		$content .= "Password mới của bạn là: [%password%]<br/><br/>";
 
 
-		$content .="If you have any questions, please contact us at support@malevia.com<br/>";
+		$content .="Nếu bạn có bất kỳ câu hỏi, vui lòng liên lạc chúng tôi theo email support@bansac.vn<br/>";
 		$content .="Thanks,<br/>";
-		$content .="Malevia<br/>";
+		$content .="Bansac<br/>";
 		
 		return $content;
 	}
