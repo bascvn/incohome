@@ -1,6 +1,6 @@
 <?php
 // do php stuff
-include('template/header.html');
+include('template/header.php');
 ?>
 
 <script>
@@ -138,7 +138,7 @@ top_menu.style.color = "White";
 		
 <?php
 // do php stuff
-include('template/footer.html');
+include('template/footer.php');
 ?>
 
        

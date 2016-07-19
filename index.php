@@ -1,6 +1,6 @@
 <?php
 // do php stuff
-include('template/header.html');
+include('template/header.php');
 ?>
 
 		<!-- Page Content -->
@@ -159,7 +159,7 @@ include('template/header.html');
 
 <?php
 // do php stuff
-include('template/footer.html');
+include('template/footer.php');
 ?>
 
 <script>

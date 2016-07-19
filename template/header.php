@@ -28,10 +28,15 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+
+	
 <?php
+
+ob_start();
+session_start();
+   
 $parts=explode('.', $_SERVER["SERVER_NAME"]);
-
-
 //var_dump($parts);
 if(sizeof($parts)>0){
 	$subdomain = strtolower($parts[0]);
@@ -41,7 +46,7 @@ if(sizeof($parts)>0){
 	   && strcmp($subdomain,"kiemtraduan")!=0 
 	   && strcmp($subdomain,"localhost")!=0 
 	   )
-	   {
+	{
 	   		$url = sprintf('%s://%s%s/%s/',
 				$_SERVER['SERVER_PORT'] == 80 ? 'http' : 'https',
 				$_SERVER['SERVER_NAME'], 
@@ -51,7 +56,9 @@ if(sizeof($parts)>0){
 			header("Location: $url");
 			exit;
 
-	   }
+	}
+	
+	
 	
 }
 ?>
@@ -85,9 +92,24 @@ if(sizeof($parts)>0){
                     <li>
                         <a  id="a_toplink_usage" href="usage.php">Hướng Dẫn Sử Dụng</a>
                     </li>
+					
                     <li>
                         <a   id="a_toplink_contact"  href="contact.php">Liên Hệ</a>
                     </li>
+					
+					<li>
+                        <a   id="a_toplink_customer"  href="signin.php">Khách Hàng</a>
+                    </li>
+<?php
+
+	if( isset($_SESSION['valid'])  && $_SESSION['valid']){
+		
+			echo 	'<li>
+                        <a   id="a_toplink_signout"  href="signout.php">Thoát</a>
+                    </li>';
+	}
+?>
+					
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

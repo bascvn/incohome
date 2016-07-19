@@ -4,7 +4,7 @@ include('template/header.php');
 ?>
 
 <script>
-var top_menu = document.getElementById("a_toplink_usage");
+var top_menu = document.getElementById("a_toplink_customer");
 top_menu.style.color = "White";
 </script>
 
