@@ -8,6 +8,7 @@
 	 
 	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
 	 define("API_PATH", "inco/"); // this is used for DEV
+	 define("HOST_OS", "window"); // this is used for DEV
 	 
 	
 	//======================================================================================
@@ -245,9 +246,63 @@ function cm_http_post($url,$params)
  
     curl_close($ch);
     return $output;
+}
 
+//==============================================================================================================
+function get_dir_size($os,$path)
+{
+	$m_size = 0;
+	$Bsize = 0;
+	
+	
+	if(strcmp($os,"window")==0){
+		//$f = 'f:/www/docs';
+		$obj = new COM ( 'scripting.filesystemobject' );
+		if ( is_object ( $obj ) )
+		{
+			$ref = $obj->getfolder ( $path );
+			$Bsize = $ref->size;
+			$obj = null;
+			
+			
+			
+			
+			
+		}
+	}else if(strcmp($os,"linux")==0){
+		
+		$io = popen ( '/usr/bin/du -sk ' . $path, 'r' );
+		$size = fgets ( $io, 4096);
+		$Bsize = substr ( $size, 0, strpos ( $size, "\t" ) );
+		pclose ( $io );
+		//echo 'Directory: ' . $f . ' => Size: ' . $size;
+		//return $size; 
+	}
+	
+	if($Bsize>0)
+	{
+		$Msize = $Bsize / (1024*1024);
+		
+		if($Msize<1){
+			$Ksize =  number_format($Msize*1024, 2, '.', '');
+			return $Ksize . " KB";
+		}
+		else if($Msize>1024){
+			
+			 $Gsize =  number_format($Msize/1024, 2, '.', '');
+			return ($Gsize . " GB");
+		}
+		else{
+			$Msize =  number_format($Msize, 2, '.', '');	
+			return $Msize . " MB" ;
+		}
+	}
+			
+	
+	return "";
 }
 
 //echo cm_encrypt('123456789');
+//echo get_dir_size(HOST_OS,"D:/basc");
 
 ?>
