@@ -175,23 +175,23 @@ top_menu.style.color = "White";
 				<form class="form-horizontal" role="form" method="post" action="contact.php">
 					
 					<div class="form-group">
-						<label for="createdate" class="col-sm-4 control-label">User Đã Tạo:</label>
+						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
 						<div class="col-sm-8">
-							<label name="createdate" class="control-label">3/12</label>
+							<label name="createdate" class="control-label">3 / 12</label>
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">GB Đã Sử Dụng:</label>
+						<label for="updatedate" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label">2/40</label>
+							<label name="updatedate" class="control-label">200M / 40GB</label>
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label">32/365</label>
+							<label name="updatedate" class="control-label">32 / 365</label>
 						</div>
 					</div>
 					

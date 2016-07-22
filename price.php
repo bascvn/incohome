@@ -104,9 +104,9 @@ top_menu.style.color = "White";
                         <p>Dành cho công ty lớn, với: </p>
 						<ul>
 						<li class="li_list" >không giới hạn User</li>
-						<li class="li_list">40 GB Dữ Liệu</li>
+						<li class="li_list">35 GB Dữ Liệu</li>
 						<li class="li_list">Không giới hạn dự án</li>
-						<li class="li_list">990.000 VND/Tháng</li>
+						<li class="li_list">1.200.000 VND/Tháng</li>
                         </ul>
                             <a href="contact.php?message=Tôi muốn mua gói PREMIUM" class="btn btn-primary">Buy Now!</a> 
 							<!--

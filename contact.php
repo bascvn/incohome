@@ -83,12 +83,12 @@ top_menu.style.color = "White";
 
   		<div class="row">
   			<div class="col-md-6 col-md-offset-3">
-  				<h1 class="page-header text-center">Contact Us</h1>
+  				<h1 class="page-header text-center">Liên Hệ</h1>
 				<form class="form-horizontal" role="form" method="post" action="contact.php">
 					<div class="form-group">
-						<label for="name" class="col-sm-2 control-label">Name</label>
+						<label for="name" class="col-sm-2 control-label">Họ Tên</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="name" name="name" placeholder="First & Last Name" value="<?php echo htmlspecialchars($name); ?>">
+							<input type="text" class="form-control" id="name" name="name" placeholder="Họ Tên" value="<?php echo htmlspecialchars($name); ?>">
 							<?php echo "<p class='text-danger'>$errName</p>";?>
 						</div>
 					</div>
@@ -109,7 +109,7 @@ top_menu.style.color = "White";
 					</div>
 					
 					<div class="form-group">
-						<label for="message" class="col-sm-2 control-label">Message</label>
+						<label for="message" class="col-sm-2 control-label">Nội Dung</label>
 						<div class="col-sm-10">
 							<textarea class="form-control" rows="4" name="message"><?php echo htmlspecialchars($message);?></textarea>
 							<?php echo "<p class='text-danger'>$errMessage</p>";?>
@@ -118,13 +118,13 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="human" class="col-sm-2 control-label">2 + 3 = ?</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="human" name="human" placeholder="Your Answer">
+							<input type="text" class="form-control" id="human" name="human" placeholder="Câu Trả Lời">
 							<?php echo "<p class='text-danger'>$errHuman</p>";?>
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-sm-10 col-sm-offset-2">
-							<input id="submit" name="submit" type="submit" value="Send to Us" class="btn btn-primary">
+						<div class="col-sm-10 col-sm-offset-4">
+							<input id="submit" name="submit" type="submit" value="Gởi Chúng Tôi" class="btn btn-primary">
 						</div>
 					</div>
 					<div class="form-group">
