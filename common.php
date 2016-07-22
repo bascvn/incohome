@@ -7,15 +7,40 @@
 	 define("ASCII_DELTA",     9); 	
 	 
 	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
-	 define("API_PATH", "inco/"); // this is used for DEV
+	 
+	 
+	 //for DEV 
+	 define("INCO_DOMAIN", "localhost"); // this is used for DEV
+	 define("SUB_INCO_PATH", "inco/"); // this is used for DEV
 	 define("HOST_OS", "window"); // this is used for DEV
+	 
+	 /* // for PROD
+	 define("INCO_DOMAIN", "kiemtraduan.net");  
+	 define("SUB_INCO_PATH", "");  
+	 define("HOST_OS", "linux");  
+	 */
+	 
+	 
+	 define("ROOT_SERVER_PATH", "C:/wamp/www/inco/"); // this is used for DEV
 	 
 	
 	//======================================================================================
     function cm_get_server_uri(){
-		$actual_link = SRV_PROTOCOL."$_SERVER[HTTP_HOST]/".API_PATH;
+		$actual_link = SRV_PROTOCOL."$_SERVER[HTTP_HOST]/".SUB_INCO_PATH;
 		return $actual_link;
 	}
+	
+	//==============================================================================================================
+	function cm_get_full_api_url($ClientCode, $target){
+		
+		//$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		//for DEV 
+		//$_uri = "http://localhost/inco/gateway.php?controller=client.get_used_memory"; 
+		$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		
+		return 	$_uri;	
+	}
+
 	
 	//======================================================================================
     function cm_connect(){
@@ -249,8 +274,9 @@ function cm_http_post($url,$params)
 }
 
 //==============================================================================================================
-function get_dir_size($os,$path)
+function cm_get_dir_size($path)
 {
+	$os = HOST_OS;
 	$m_size = 0;
 	$Bsize = 0;
 	
@@ -302,7 +328,11 @@ function get_dir_size($os,$path)
 	return "";
 }
 
+
+
+
 //echo cm_encrypt('123456789');
-//echo get_dir_size(HOST_OS,"D:/basc");
+//echo cm_get_dir_size(ROOT_SERVER_PATH."incodemo" );
+
 
 ?>

@@ -21,7 +21,7 @@ include('template/header.php');
    $MaxGB = 0;
    $MaxUser = 0;
    $PackageName = '';
-   
+   $ClientID = 0;
   
    
    
@@ -36,6 +36,7 @@ include('template/header.php');
 	//$data   = array();        
 	$found_client = false;
 	while ($row = mysqli_fetch_array($result)) {
+		$ClientID =  $row['ClientID'];
 		 $ClientName = $row['ClientName'];
 		 $ContactPhone = $row['ContactPhone'];
 		 $secondFromGMT = $row['GMT']; 
@@ -64,14 +65,44 @@ include('template/header.php');
 			date_default_timezone_set("UTC");
 		}
 		
-		//$DateCreatedObj = new DateTime("@$DateCreated");
-		
-
-	
+		//$DateCreatedObj = new DateTime("@$DateCreated");	
 	}
 		
+	
+	
+	
+	$DateCurrent=time();
+	$DateUsed = floor(($DateCurrent - $DateUpdated) / (24*60*60));
+	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
+	
+	
+	//get used memory
+	$params_arr = array(
+			'ClientCode' => $ClientCode
+	);
+	
+	
+	$uri_get_used_memory = cm_get_full_api_url($ClientCode, "client.get_used_memory"); 
+	$UsedGB = cm_http_post($uri_get_used_memory,$params_arr);	
+	
+	//echo $uri_get_used_memory;
+	
+	$query  = "SELECT `PaymentHistory`.*
+			FROM `PaymentHistory`
+			WHERE `PaymentHistory`.ClientID = $ClientID AND `PaymentHistory`.RemovalFlag = 0
+			ORDER BY `PaymentHistory`.`DateTime` DESC";
+	
+	//echo $query;
+	
+	$result = mysqli_query($db, $query);
+	$payment_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($payment_data,$row);
+	}
+	
+	
 	cm_close_connect($db);
-		
+	
 ?>
 
 
@@ -85,6 +116,13 @@ top_menu.style.color = "White";
   				<h1 class="page-header text-center">Tài Khoản <?php echo "<p>$ClientName</p>";?></h1>
 				
 				<form class="form-horizontal" role="form" method="post" action="contact.php">
+					
+					<div class="form-group">
+						<label for="createdate" class="col-sm-4 control-label">Mã Công Ty:</label>
+						<div class="col-sm-8">
+							<label name="createdate" class="control-label"><?php echo  $ClientCode; ?></label>
+						</div>
+					</div>
 					
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Ngày Tạo:</label>
@@ -158,7 +196,7 @@ top_menu.style.color = "White";
 					
 					
 					<div class="form-group">
-						<div class="col-sm-12 col-sm-offset-6">
+						<div class="col-sm-12 col-sm-offset-5">
 							<input id="submit" name="submit" type="submit" value="Thay Đổi" class="btn btn-primary">
 						</div>
 					</div>
@@ -177,28 +215,28 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
 						<div class="col-sm-8">
-							<label name="createdate" class="control-label">3 / 12</label>
+							<label name="createdate" class="control-label"><?php echo $MaxUser ." / ".$MaxUser ; ?></label>
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label">200M / 40GB</label>
+							<label name="updatedate" class="control-label"><?php echo $UsedGB." / ".$MaxGB." GB" ; ?> </label>
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label">32 / 365</label>
+							<label name="updatedate" class="control-label"><?php echo $DateUsed." / ".$DateTotal ; ?> </label>
 						</div>
 					</div>
 					
 					
 					
 					<div class="form-group">
-						<div class="col-sm-12 col-sm-offset-6">
+						<div class="col-sm-12 col-sm-offset-5">
 							<input id="submit" name="submit" type="submit" value="Nâng Cấp" class="btn btn-primary">
 						</div>
 					</div>
@@ -211,15 +249,26 @@ top_menu.style.color = "White";
   			<div class="col-md-6 col-md-offset-3">
   				<h1 class="page-header text-center">Lịch Sử Giao Dịch</h1>
 				
-				<form class="form-horizontal" role="form" method="post" action="contact.php">
+				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
+					<tr>
+					<th>Ngày</th>
+					<th>Nội Dung Giao Dịch</th>
+					</tr>
 					
-					<div class="form-group">
-						<div class="col-sm-12 col-sm-offset-5">
-							<input id="submit" name="submit" type="submit" value="Xem Lịch Sử" class="btn btn-primary">
-						</div>
-					</div>
+					<?php for($i=0;$i<sizeof($payment_data);$i++){
+						$row = $payment_data[$i];
+						$PaymentDate = 	$row['DateTime'];
+						$PayDescription = $row['Description'];
+						
+						echo "<tr>
+								<td>".date('d/m/Y',  $PaymentDate )."</td>
+								<td>$PayDescription</td>
+							</tr>";
+						
+					} ?>
 					
-				</form> 
+				</table>
+
 			</div>
 		</div>
 		
