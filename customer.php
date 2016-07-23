@@ -211,7 +211,7 @@ top_menu.style.color = "White";
   			<div class="col-md-6 col-md-offset-3">
   				<h2 class="page-header text-center">Thống Kê Sử Dựng</h2>
 				
-				<form class="form-horizontal" role="form" method="post" action="contact.php">
+				<form class="form-horizontal" role="form" method="post" >
 					
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
@@ -238,7 +238,9 @@ top_menu.style.color = "White";
 					
 					<div class="form-group">
 						<div class="col-sm-12 col-sm-offset-5">
-							<input id="submit" name="submit" type="submit" value="Nâng Cấp" class="btn btn-primary">
+							<a href="#" class="btn btn-primary" 
+								data-toggle="modal" 
+								data-target="#basicModal">Nâng Cấp</a>
 						</div>
 					</div>
 					
@@ -410,7 +412,67 @@ top_menu.style.color = "White";
 
 			</div>
 		</div>
-		
+
+
+   
+<!--  package upgrade dialog -->
+<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog my-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Nâng Cấp Sử Dụng</h4>
+            </div>
+            <div class="modal-body modal-body2">
+                
+				<form class="form-horizontal" role="form" method="post">	
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Gói Hiện Tại</label>
+						<div class="col-sm-7">
+							<label for="name" class="col-sm-5 control-label"><?php echo $PackageName; ?></label>
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Chọn Gói Cao Hơn</label>
+						<div class="col-sm-7">
+							
+							<select class="form-control" id="sel1">
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+							 </select>
+	  
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Mua Thêm Bộ Nhớ (GB)</label>
+						<div class="col-sm-7">
+							<input type="number" class="form-control" id="name" name="name" placeholder="1" value="0">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Yêu Cầu Khác</label>
+						<div class="col-sm-7">
+								<textarea class="form-control" rows="4" name="message"><?php echo "";?></textarea>
+						</div>
+					</div>
+				</form>		
+					
+				
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary">Gởi Chúng Tôi</button>
+        </div>
+    </div>
+  </div>
+</div>
+
 
 <?php
 // do php stuff
