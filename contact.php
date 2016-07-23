@@ -84,7 +84,7 @@ top_menu.style.color = "White";
   		<div class="row">
   			<div class="col-md-6 col-md-offset-3">
   				<h1 class="page-header text-center">Liên Hệ</h1>
-				<form class="form-horizontal" role="form" method="post" action="contact.php">
+				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 					<div class="form-group">
 						<label for="name" class="col-sm-2 control-label">Họ Tên</label>
 						<div class="col-sm-10">

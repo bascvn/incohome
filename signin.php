@@ -35,6 +35,8 @@ include('template/header.php');
 			$_SESSION['timeout'] = time();
 			$_SESSION['username'] = $_POST["username"];
 			$_SESSION['clientcode'] = $_POST["clientcode"];
+			$_SESSION['password'] = $_POST["password"];
+			
 			$found_client = true;
 			echo 'Bạn đã đăng nhập thành công';
 		}

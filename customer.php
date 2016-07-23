@@ -22,11 +22,83 @@ include('template/header.php');
    $MaxUser = 0;
    $PackageName = '';
    $ClientID = 0;
+   $DBName = '';
+   $DBUser = '';
+   $DBPassword = '';
+   $result_msg = '';
   
-   
-   
-   
    $db     = cm_connect();
+   
+   
+   //change values
+   if (isset($_POST["submit"])) {
+		
+		$client_name = $_POST['client_name'];
+		$client_phone = $_POST['client_phone'];
+		$client_email = $_POST['client_email'];
+		$OldPassword = $_POST['OldPassword'];
+		$NewPassword = $_POST['NewPassword'];
+		$ReNewPassword = $_POST['ReNewPassword'];	
+		
+		$doUpdate = true;
+		$pass_hash = '';
+		
+		if (!filter_var($client_email, FILTER_VALIDATE_EMAIL)) {
+			$result_msg = '<div class="alert alert-warning">Email không hợp lệ.</div>'; 
+			$doUpdate = false;
+			
+		}
+		
+		
+		
+		else if(strlen($OldPassword)>0 && strlen($NewPassword)>0 && strlen($ReNewPassword)>0 ){
+			if(strcmp($_SESSION['password'],$OldPassword)!=0){
+				$result_msg = '<div class="alert alert-warning">Password cũ không đúng.</div>'; 
+				$doUpdate = false;
+			}
+			else if(strlen($NewPassword)<6){
+				$result_msg = '<div class="alert alert-warning">Password mới dưới 6 ký tự.</div>'; 
+				$doUpdate = false;
+			}
+			else if(strcmp($NewPassword,$ReNewPassword)!=0){
+				$result_msg = '<div class="alert alert-warning">Password mới và gõ lại không giống.</div>'; 
+				$doUpdate = false;
+			}
+			
+			$pass_hash = password_hash($NewPassword, PASSWORD_DEFAULT);
+		}
+		
+		
+		
+		if($doUpdate){
+				$query  = "UPDATE `Client` SET 
+				 `Client`.ClientName = '$client_name' 
+				 ,`Client`.ContactEmail = '$client_email' 
+				 ,`Client`.ContactPhone = '$client_phone' "
+				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
+				 ." WHERE `Client`.ClientCode = '$ClientCode'";
+				 
+			
+				 $result = mysqli_query($db, $query);
+				if($result){
+					$ContactEmail = $_SESSION['username'] =  $client_email;
+					if(strlen($pass_hash)>0){
+						$_SESSION['password'] = $NewPassword; 
+					}
+					
+					$result_msg ='<div class="alert alert-success">Đã cập nhật thành công.</div>';
+				}else{
+					$result_msg ='<div class="alert alert-warning">Không thể cập nhật được.</div>';
+				}
+		
+		}
+		 
+		 
+		 
+   }
+   
+   
+   //get client info
    $query  = "SELECT `Client`.*,`Package`.PackageName
 			FROM `Client`,`Package`
 			WHERE LOWER(`Client`.`ContactEmail`) = LOWER('$ContactEmail') AND `Client`.ClientCode = '$ClientCode'  AND `Client`.`RemovalFlag` = 0 
@@ -46,13 +118,15 @@ include('template/header.php');
 		 $MaxGB = $row['MaxGB']; 
 		 $MaxUser = $row['MaxUser']; 
 		 $PackageName = $row['PackageName']; 
+		 
+		$DBName = $row['DBName']; 
+		$DBUser = $row['DBUser']; 
+		$DBPassword = cm_decrypt($row['DBPassword']); 
 	}
 	
 	if(!$found_client){
 		$msg = 'Công ty không đã hết hạn.';
 	}else{
-		
-		
 		
 		if($secondFromGMT!=0){
 			$tz = timezone_name_from_abbr('', $secondFromGMT, 1);
@@ -65,7 +139,6 @@ include('template/header.php');
 			date_default_timezone_set("UTC");
 		}
 		
-		//$DateCreatedObj = new DateTime("@$DateCreated");	
 	}
 		
 	
@@ -79,9 +152,9 @@ include('template/header.php');
 	//get used memory
 	$params_arr = array(
 			'ClientCode' => $ClientCode
-			,'DBName' => 'incodemo'
-			,'DBUser' => 'root'
-			,'DBPass' => '12345'
+			,'DBName' => $DBName
+			,'DBUser' => $DBUser
+			,'DBPass' => $DBPassword
 			
 	);
 
@@ -98,42 +171,20 @@ include('template/header.php');
 	while ($row = mysqli_fetch_array($result)) {
 		array_push($payment_data,$row);
 	}
-	
-	
-	cm_close_connect($db);
-	
-	
 
+	cm_close_connect($db);
 	
 	$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
 	$UserInfo = cm_http_post($uri_get_user_info,$params_arr);	
-
-	
-	
-	//$utf8_2 = iconv('ISO-8859-1', 'UTF-8', $UserInfo);
-	//$utf8_2 = mb_convert_encoding($UserInfo , 'UTF-8', 'ISO-8859-1');
-	
-	//echo $UserInfo;
-	//$UserInfo = '{"status":200,"message":"ok","used_memory": "13.18 MB","user_count":"5"}';
-	//var_dump($book = json_decode($json));
-	
-	//$UserInfo= ﻿ '{\"status\":200,\"message\":\"ok\",\"used_memory\": \"13.18 MB\",\"user_count\":5}';
-	//$UserInfo_Json = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $UserInfo), true );
-	
-	//$UserInfo_Json = json_decode($UserInfo, true);
-	//echo $UserInfo;
-	$UserInfo_Json = json_decode($UserInfo);
-	
-
-
-
-	
+	$UserInfo = substr($UserInfo, strpos($UserInfo,"{"));
+	$UserInfo_Json = json_decode($UserInfo,true);
 	//var_dump($UserInfo_Json);
 	
-	$UsedGB = 0;
-	
-	if ($UserInfo_Json->status == 200){
-		$UsedGB = $UserInfo_Json->used_memory;
+	$used_memory = 0;
+	$user_count = 0;
+	if ($UserInfo_Json['status'] == 200){
+		$used_memory = $UserInfo_Json['used_memory'];
+		$user_count = $UserInfo_Json['user_count'];
 	}
 	
 ?>
@@ -144,11 +195,63 @@ var top_menu = document.getElementById("a_toplink_customer");
 top_menu.style.color = "White";
 </script>
 
+		
+		
+		
+				
+		<h1 class="page-header text-center"><?php echo "<p>$ClientName</p>";?></h1>	
+
+		<div class="form-group">
+			<div class="col-sm-10 col-sm-offset-2">
+				<?php echo $result_msg; ?>	
+			</div>
+		</div>	
+				
 		<div class="row">
   			<div class="col-md-6 col-md-offset-3">
-  				<h1 class="page-header text-center">Tài Khoản <?php echo "<p>$ClientName</p>";?></h1>
+  				<h2 class="page-header text-center">Thống Kê Sử Dựng</h2>
 				
 				<form class="form-horizontal" role="form" method="post" action="contact.php">
+					
+					<div class="form-group">
+						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
+						<div class="col-sm-8">
+							<label name="createdate" class="control-label"><?php echo $user_count ." / ".$MaxUser ; ?></label>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="updatedate" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
+						<div class="col-sm-8">
+							<label name="updatedate" class="control-label"><?php echo $used_memory." / ".$MaxGB." GB" ; ?> </label>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="updatedate" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
+						<div class="col-sm-8">
+							<label name="updatedate" class="control-label"><?php echo $DateUsed." / ".$DateTotal ; ?> </label>
+						</div>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<div class="col-sm-12 col-sm-offset-5">
+							<input id="submit" name="submit" type="submit" value="Nâng Cấp" class="btn btn-primary">
+						</div>
+					</div>
+					
+				</form> 
+			</div>
+		</div>
+		
+		
+		<div class="row">
+  			<div class="col-md-6 col-md-offset-3">
+  				<h2 class="page-header text-center">Thông Tin Tài Khoản</h2>
+				
+				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 					
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Mã Công Ty:</label>
@@ -204,7 +307,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="name" class="col-sm-4 control-label">Tên Công Ty</label>
 						<div class="col-sm-8">
-							<input type="text" class="form-control" id="name" name="name" placeholder="Tên Công Ty" value="<?php echo htmlspecialchars($ClientName); ?>">
+							<input type="text" class="form-control" id="client_name" name="client_name" placeholder="Tên Công Ty" value="<?php echo htmlspecialchars($ClientName); ?>">
 							
 							
 						</div>
@@ -212,7 +315,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="email" class="col-sm-4 control-label">Email</label>
 						<div class="col-sm-8">
-							<input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php echo htmlspecialchars($ContactEmail); ?>">
+							<input type="email" class="form-control" id="client_email" name="client_email" placeholder="example@domain.com" value="<?php echo htmlspecialchars($ContactEmail); ?>">
 							
 						</div>
 					</div>
@@ -220,7 +323,34 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="phone" class="col-sm-4 control-label">Phone</label>
 						<div class="col-sm-8">
-							<input type="phone" class="form-control" id="phone" name="phone" placeholder="" value="<?php echo htmlspecialchars($ContactPhone); ?>">
+							<input type="phone" class="form-control" id="client_phone" name="client_phone" placeholder="" value="<?php echo htmlspecialchars($ContactPhone); ?>">
+							
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="phone" class="col-sm-4 control-label">Password Cũ</label>
+						<div class="col-sm-8">
+							<input type = "password"  class="form-control" id="OldPassword" name="OldPassword" placeholder="" >
+							
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="phone" class="col-sm-4 control-label">Password Mới</label>
+						<div class="col-sm-8">
+							<input  type = "password"  class="form-control" id="NewPassword" name="NewPassword" placeholder="tối thiểu 6 ký tự" >
+							
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="phone" class="col-sm-4 control-label">Gõ Lại Password Mới</label>
+						<div class="col-sm-8">
+							<input  type = "password"  class="form-control" id="ReNewPassword" name="ReNewPassword" placeholder="tối thiểu 6 ký tự" >
 							
 							
 						</div>
@@ -239,53 +369,17 @@ top_menu.style.color = "White";
 		</div>
 	
 
-	<div class="row">
-  			<div class="col-md-6 col-md-offset-3">
-  				<h1 class="page-header text-center">Thống Kê Sử Dựng</h1>
-				
-				<form class="form-horizontal" role="form" method="post" action="contact.php">
-					
-					<div class="form-group">
-						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
-						<div class="col-sm-8">
-							<label name="createdate" class="control-label"><?php echo $MaxUser ." / ".$MaxUser ; ?></label>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
-						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $UsedGB." / ".$MaxGB." GB" ; ?> </label>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
-						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $DateUsed." / ".$DateTotal ; ?> </label>
-						</div>
-					</div>
-					
-					
-					
-					<div class="form-group">
-						<div class="col-sm-12 col-sm-offset-5">
-							<input id="submit" name="submit" type="submit" value="Nâng Cấp" class="btn btn-primary">
-						</div>
-					</div>
-					
-				</form> 
-			</div>
-		</div>
+	
 		
 		<div class="row">
   			<div class="col-md-6 col-md-offset-3">
-  				<h1 class="page-header text-center">Lịch Sử Giao Dịch</h1>
+  				<h2 class="page-header text-center">Lịch Sử Giao Dịch</h2>
 				
 				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
 					<th>Ngày</th>
 					<th>Nội Dung Giao Dịch</th>
+					<th  style="text-align:right">Số Tiền (VND)</th>
 					</tr>
 					
 					<?php for($i=0;$i<sizeof($payment_data);$i++){
@@ -293,9 +387,21 @@ top_menu.style.color = "White";
 						$PaymentDate = 	$row['DateTime'];
 						$PayDescription = $row['Description'];
 						
+						
+						$Subtotal =  $row['Subtotal'];
+						$Discount =  $row['Discount'];
+						$Tax =  $row['Tax'];
+						$DiscountTax =  $row['DiscountTax'];
+						
+						$TotalPay = $Subtotal + $Tax  - $Discount - $DiscountTax;
+						
+						
+						
+						
 						echo "<tr>
 								<td>".date('d/m/Y',  $PaymentDate )."</td>
 								<td>$PayDescription</td>
+								<td style='text-align:right'>".number_format($TotalPay,0,',','.')."</td>
 							</tr>";
 						
 					} ?>

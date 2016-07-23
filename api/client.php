@@ -52,9 +52,10 @@ function get_client_info(){
 			}
 			
 			
-			//header('Content-Type: application/json; charset=utf-8');
+		
 			//echo json_encode('{"status":200,"message":"ok","used_memory": "'.$used_memory.'","user_count":'. $UserCount.'}');
-			echo '{"status":200,"message":"ok","used_memory": "'.$used_memory.'","user_count":"'. $UserCount.'"}';
+			echo '{"status":200,"message":"ok","used_memory": "'.$used_memory.'","user_count":'. $UserCount.'}';
+			
 		}
 	
 	
@@ -62,7 +63,9 @@ function get_client_info(){
 		echo $e;
 	}finally {
 		mysqli_close($db);
-	}	
+		exit(0);
+	}
+		
 }
 
 
