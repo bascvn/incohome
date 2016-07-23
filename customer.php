@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // do php stuff
 include('template/header.php');
 ?>
@@ -79,13 +79,12 @@ include('template/header.php');
 	//get used memory
 	$params_arr = array(
 			'ClientCode' => $ClientCode
+			,'DBName' => 'incodemo'
+			,'DBUser' => 'root'
+			,'DBPass' => '12345'
+			
 	);
-	
-	
-	$uri_get_used_memory = cm_get_full_api_url($ClientCode, "client.get_used_memory"); 
-	$UsedGB = cm_http_post($uri_get_used_memory,$params_arr);	
-	
-	//echo $uri_get_used_memory;
+
 	
 	$query  = "SELECT `PaymentHistory`.*
 			FROM `PaymentHistory`
@@ -102,6 +101,40 @@ include('template/header.php');
 	
 	
 	cm_close_connect($db);
+	
+	
+
+	
+	$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
+	$UserInfo = cm_http_post($uri_get_user_info,$params_arr);	
+
+	
+	
+	//$utf8_2 = iconv('ISO-8859-1', 'UTF-8', $UserInfo);
+	//$utf8_2 = mb_convert_encoding($UserInfo , 'UTF-8', 'ISO-8859-1');
+	
+	//echo $UserInfo;
+	//$UserInfo = '{"status":200,"message":"ok","used_memory": "13.18 MB","user_count":"5"}';
+	//var_dump($book = json_decode($json));
+	
+	//$UserInfo= ﻿ '{\"status\":200,\"message\":\"ok\",\"used_memory\": \"13.18 MB\",\"user_count\":5}';
+	//$UserInfo_Json = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $UserInfo), true );
+	
+	//$UserInfo_Json = json_decode($UserInfo, true);
+	//echo $UserInfo;
+	$UserInfo_Json = json_decode($UserInfo);
+	
+
+
+
+	
+	//var_dump($UserInfo_Json);
+	
+	$UsedGB = 0;
+	
+	if ($UserInfo_Json->status == 200){
+		$UsedGB = $UserInfo_Json->used_memory;
+	}
 	
 ?>
 
