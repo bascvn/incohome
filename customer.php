@@ -66,7 +66,8 @@ include('template/header.php');
 				$doUpdate = false;
 			}
 			
-			$pass_hash = password_hash($NewPassword, PASSWORD_DEFAULT);
+			//$pass_hash = password_hash($NewPassword, PASSWORD_DEFAULT);
+			$pass_hash = cm_encrypt_password($NewPassword);
 		}
 		
 		
@@ -140,10 +141,7 @@ include('template/header.php');
 		else{
 			date_default_timezone_set("UTC");
 		}
-		
 	}
-		
-	
 	
 	
 	$DateCurrent=time();

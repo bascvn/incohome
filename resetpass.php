@@ -7,11 +7,9 @@
 	$uid = $_GET["uid"];
 	$ResetToken = $_GET["resettoken"];
 	$NewPassword =  cm_generateRandomString(6);
-	$pass_hash = password_hash($NewPassword, PASSWORD_DEFAULT);
+	//$pass_hash = password_hash($NewPassword, PASSWORD_DEFAULT);
+	$pass_hash = cm_encrypt_password($NewPassword);
 	$NewResetToken = cm_generateRandomString(10);
-
-	
-	
 	$db     = cm_connect();	
 	$query  = "SELECT * FROM `Client` WHERE `Client`.`ClientID` = '$uid' AND ResetToken='$ResetToken'";
 	

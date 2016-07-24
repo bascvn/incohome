@@ -8,7 +8,7 @@
 	 
 	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
 	 
-	 
+	 /*
 	 //for DEV 
 	 define("INCO_DOMAIN", "localhost"); // this is used for DEV
 	 define("SUB_INCO_PATH", "inco/"); // this is used for DEV
@@ -16,9 +16,9 @@
 	 define("SUPPORT_EMAIL", "nvlong@gmail.com"); // this is used for DEV
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV
 	 define("ROOT_SERVER_PATH", "C:/wamp/www/inco/"); // this is used for DEV
+	 */
 	 
 	 
-	 /*
 	  // for PROD
 	 define("INCO_DOMAIN", "kiemtraduan.net");  
 	 define("SUB_INCO_PATH", "");  
@@ -26,7 +26,7 @@
 	 define("SUPPORT_EMAIL", "support@bansac.vn"); // this is used for DEV
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV 
 	 define("ROOT_SERVER_PATH", "/var/www/kiemtraduan.net/public_html/"); // this is used for DEV
-	 */
+	 
 	 
 	 
 	 
@@ -40,12 +40,12 @@
 	//==============================================================================================================
 	function cm_get_full_api_url($ClientCode, $target){
 		
-		//$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
 		
 		
 		//for DEV 
 		//$_uri = "http://localhost/inco/gateway.php?controller=client.get_used_memory"; 
-		$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."gateway.php?controller=".$target;
+		//$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."gateway.php?controller=".$target;
 		
 		return 	$_uri;	
 	}
@@ -55,8 +55,8 @@
     function cm_connect(){
 		
 		// Create connection
-		 $con=mysqli_connect('127.0.0.1','root','12345','incoclient');
-		 //$con=mysqli_connect('127.0.0.1','incoclient','~vbfgrt45@','incoclient');
+		 //$con=mysqli_connect('127.0.0.1','root','12345','incoclient');
+		 $con=mysqli_connect('127.0.0.1','incoclient','~vbfgrt45@','incoclient');
 		   
 
 
@@ -248,6 +248,22 @@ function cm_decrypt($code)
 	return ($ds1.$ds3.$ds2);
 }
 
+//==============================================================================================================
+function cm_encrypt_password($input, $rounds = 7)
+{
+	$salt = "";
+	$salt_chars = array_merge(range('A','Z'), range('a','z'), range(0,9));
+	for($i=0; $i < 22; $i++) {
+	  $salt .= $salt_chars[array_rand($salt_chars)];
+	}
+	return crypt($input, sprintf('$2a$%02d$', $rounds) . $salt);
+}
+
+//==============================================================================================================
+function cm_verify_password($password_entered, $password_hash)
+{
+	return (crypt($password_entered, $password_hash) == $password_hash);
+}
 
 
 //==============================================================================================================
@@ -361,34 +377,39 @@ function cm_get_dir_size($path)
 			$Bsize = $ref->size;
 			$obj = null;	
 		}
+		
+		
+		if($Bsize>0)
+		{
+			$Msize = $Bsize / (1024*1024);
+			
+			if($Msize<1){
+				$Ksize =  number_format($Msize*1024, 2, '.', '');
+				return $Ksize . " KB";
+			}
+			else if($Msize>1024){
+				
+				 $Gsize =  number_format($Msize/1024, 2, '.', '');
+				return ($Gsize . " GB");
+			}
+			else{
+				$Msize =  number_format($Msize, 2, '.', '');	
+				return $Msize . " MB" ;
+			}
+		}
+	
+		
 	}else if(strcmp($os,"linux")==0){
 		
-		$io = popen ( '/usr/bin/du -sb ' . $path, 'r' );
+		$io = popen ( '/usr/bin/du -sh ' . $path, 'r' );
 		$size = fgets ( $io, 4096);
 		$Bsize = substr ( $size, 0, strpos ( $size, "\t" ) );
 		pclose ( $io );
 		//echo 'Directory: ' . $f . ' => Size: ' . $size;
-		//return $size; 
+		return $Bsize; 
 	}
 	
-	if($Bsize>0)
-	{
-		$Msize = $Bsize / (1024*1024);
-		
-		if($Msize<1){
-			$Ksize =  number_format($Msize*1024, 2, '.', '');
-			return $Ksize . " KB";
-		}
-		else if($Msize>1024){
-			
-			 $Gsize =  number_format($Msize/1024, 2, '.', '');
-			return ($Gsize . " GB");
-		}
-		else{
-			$Msize =  number_format($Msize, 2, '.', '');	
-			return $Msize . " MB" ;
-		}
-	}
+	
 			
 	
 	return "";
@@ -396,7 +417,7 @@ function cm_get_dir_size($path)
 
 
 
-
+//echo cm_encrypt_password('123456789');
 //echo cm_encrypt('~1qazxsw23@');
 //echo cm_get_dir_size(ROOT_SERVER_PATH."incodemo" );
 

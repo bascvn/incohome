@@ -30,15 +30,10 @@ include('template/header.php');
 		//$data   = array();        
 		$found_client = false;
 	
-		
 		while ($row = mysqli_fetch_array($result)) {
-			//echo "come ".password_verify(  $ContactPassword, $row["ContactPassword"]);
-			
-			/*
-			if (!password_verify(  $ContactPassword, $row["ContactPassword"])) {
+			if (!cm_verify_password(  $ContactPassword, $row["ContactPassword"])) {
 				break;
 			}
-			*/
 		
 			$_SESSION['valid'] = true;
 			$_SESSION['timeout'] = time();
