@@ -64,8 +64,39 @@ function get_client_info(){
 	}finally {
 		mysqli_close($db);
 		exit(0);
-	}
+	}	
+}
+
+//======================================================================================
+function send_upgrade_request(){
+	try{
+		$ClientCode = $_POST["ClientCode"];
+		$RequestContent = $_POST["RequestContent"];
 		
+		
+		$from = FROM_EMAIL; 
+		$to = SUPPORT_EMAIL; 
+		$subject = $ClientCode. ' - Request Upgrade';
+		$body = $RequestContent;
+		
+		$toArr = array($to);
+		$return_data = cm_send_mail($toArr,$subject,$body);
+		if(strpos($return_data,"200")<0){
+			echo "Xin lỗi, hệ thống mail của chúng tôi đang bị trục trặc, bạn vui lòng thử lại";
+		}
+		else
+		{
+			echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
+		}
+			
+		
+	}catch(Exception $e){
+		echo $e;
+	}finally {
+		//mysqli_close($db);
+		exit(0);
+	}	
+	
 }
 
 

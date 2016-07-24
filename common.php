@@ -13,11 +13,16 @@
 	 define("INCO_DOMAIN", "localhost"); // this is used for DEV
 	 define("SUB_INCO_PATH", "inco/"); // this is used for DEV
 	 define("HOST_OS", "window"); // this is used for DEV
+	 define("SUPPORT_EMAIL", "nvlong@gmail.com"); // this is used for DEV
+	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV
+	 
 	 
 	 /* // for PROD
 	 define("INCO_DOMAIN", "kiemtraduan.net");  
 	 define("SUB_INCO_PATH", "");  
 	 define("HOST_OS", "linux");  
+	 define("SUPPORT_EMAIL", "support@bansac.vn"); // this is used for DEV
+	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV 
 	 */
 	 
 	 

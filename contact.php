@@ -33,8 +33,8 @@ include('template/header.php');
 		$message = $_POST['message'];
 		$human = intval($_POST['human']);
 		
-		$from = 'contact@kiemtraduan.net'; 
-		$to = 'support@bansac.vn'; 
+		$from = FROM_EMAIL; 
+		$to = SUPPORT_EMAIL; 
 		$subject = 'Contact from INCO';
 		$body ="From: $name\n E-Mail: $email\n Phone: $phone\n  Message:\n $message";
 
@@ -60,7 +60,7 @@ include('template/header.php');
 		// If there are no errors, send the email
 		if (!$errName && !$errEmail && !$errMessage && !$errHuman) {
 			
-			$toArr = array("support@bansac.vn");
+			$toArr = array($to);
 			$return_data = cm_send_mail($toArr,$subject,$body);
 			if(strpos($return_data,"200")<0){
 				$result='<div class="alert alert-danger">Xin lỗi, hệ thống mail của chúng tôi đang bị trục trặc, bạn vui lòng thử lại.</div>';

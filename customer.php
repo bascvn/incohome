@@ -517,8 +517,11 @@ top_menu.style.color = "White";
             </div>
             <div class="modal-body my-warn-modal-body">
                 <div class="alert alert-warning" id="md_warning_body_text" >
-				  
 				</div>
+				
+				<div class="alert alert-success" id="md_success_body_text" >
+				</div>
+				
 	
             </div>
             <div class="modal-footer">
@@ -527,6 +530,7 @@ top_menu.style.color = "White";
     </div>
   </div>
 </div>
+
 
 
 <?php
@@ -586,13 +590,32 @@ include('template/footer.php');
 		}
 		
 		//alert(send_content);
+		//$("#md_warning_body_text").text(send_content);
+		//$("#md_warning").modal("toggle");
+		//$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
 		
-		$("#md_warning_body_text").text(send_content);
-		$("#md_warning").modal("toggle");
+		var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request";
+		 $('<div class=loadingDiv>Đang xử lý...</div>').prependTo(document.body); 
+		$.post(post_uri,
+			{
+				ClientCode: ClientCode,
+				RequestContent: send_content
+			},
 			
+			function(data, status){
+				
+				$body = $("body");
+				//alert("Data: " + data + "\nStatus: " + status);
+				$("#md_success_body_text").text(data);
+				$("#md_warning").modal("toggle");
+				$body.removeClass("loadingDiv"); 
 		
-		
-		
+				
+			});
+			
+			$("#basicModal").modal("toggle");
+			
+	
 			
 	});
 	
