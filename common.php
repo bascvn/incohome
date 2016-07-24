@@ -39,6 +39,8 @@
 	function cm_get_full_api_url($ClientCode, $target){
 		
 		//$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		
+		
 		//for DEV 
 		//$_uri = "http://localhost/inco/gateway.php?controller=client.get_used_memory"; 
 		$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;

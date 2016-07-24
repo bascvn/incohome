@@ -256,7 +256,8 @@ top_menu.style.color = "White";
 						<div class="col-sm-12 col-sm-offset-5">
 							<a href="#" class="btn btn-primary" 
 								data-toggle="modal" 
-								data-target="#basicModal">Nâng Cấp</a>
+								data-target="#basicModal"
+								data-backdrop="static" data-keyboard="false">Nâng Cấp</a>
 						</div>
 					</div>
 					
@@ -509,29 +510,6 @@ top_menu.style.color = "White";
 </div>
 
 
-<div class="modal fade" id="md_warning" tabindex="-1" role="dialog" aria-labelledby="md_warning" aria-hidden="true">
-    <div class="modal-dialog my-warn-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h4 class="modal-title" id="myModalLabel">Thông báo</h4>
-            </div>
-            <div class="modal-body my-warn-modal-body">
-                <div class="alert alert-warning" id="md_warning_body_text" >
-				</div>
-				
-				<div class="alert alert-success" id="md_success_body_text" >
-				</div>
-				
-	
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-        </div>
-    </div>
-  </div>
-</div>
-
-
 
 <?php
 // do php stuff
@@ -558,6 +536,8 @@ include('template/footer.php');
 	});
 	
 	$("#bt_send_up_request").click(function() {
+		
+		
 		var up_package = $('#sel_up_package').val();
 		var add_gb =  $("#txt_add_gb").val();
 		var txt_request_other = $('#txt_request_other').val();
@@ -566,7 +546,10 @@ include('template/footer.php');
 		if(up_package==0 && add_gb==0 && txt_request_other.length ==0 && !cb_host_own_server){
 			 	
 			$("#md_warning_body_text").text("Vui lòng mô tả yêu cầu nâng cấp.");
-			$("#md_warning").modal("toggle");
+			$("#md_warning_body_text").removeClass("alert-success");
+			$("#md_warning_body_text").addClass("alert-warning");
+			
+			$("#md_warning").modal({backdrop: 'static', keyboard: false});
 			
 			return;
 		}
@@ -589,13 +572,10 @@ include('template/footer.php');
 			send_content += "Yêu cầu khác: " + txt_request_other +"\n";
 		}
 		
-		//alert(send_content);
-		//$("#md_warning_body_text").text(send_content);
-		//$("#md_warning").modal("toggle");
-		//$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
 		
-		var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request";
-		 $('<div class=loadingDiv>Đang xử lý...</div>').prependTo(document.body); 
+		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request"; 
+		var post_uri  = "<?php echo cm_get_full_api_url("www", "client.send_upgrade_request");?>"; 
+		$("#md_waiting").modal({backdrop: 'static', keyboard: false});
 		$.post(post_uri,
 			{
 				ClientCode: ClientCode,
@@ -604,21 +584,41 @@ include('template/footer.php');
 			
 			function(data, status){
 				
-				$body = $("body");
+				$("#md_waiting").modal("toggle");
+				
 				//alert("Data: " + data + "\nStatus: " + status);
-				$("#md_success_body_text").text(data);
-				$("#md_warning").modal("toggle");
-				$body.removeClass("loadingDiv"); 
-		
+				$("#md_warning_body_text").text(data);
+				$("#md_warning_body_text").removeClass("alert-warning");
+				$("#md_warning_body_text").addClass("alert-success");
+				$("#md_warning").modal({backdrop: 'static', keyboard: false});
 				
 			});
 			
 			$("#basicModal").modal("toggle");
 			
-	
-			
 	});
 	
 	
+	$('#basicModal').on('hidden', function () {
+		// do something…
+		$("#cb_host_own_server").prop('checked', false);
+		$("#txt_add_gb").removeAttr("disabled"); 
+		$("#sel_up_package").removeAttr("disabled"); 
+		$("#txt_add_gb").val("0");
+		$('#sel_up_package').val('0'); 
+		$('#txt_request_other').val(''); 
+	});
+
+
+	$('#basicModal').on('hidden.bs.modal', function () {
+	  // do something…
+	  	$("#cb_host_own_server").prop('checked', false);
+		$("#txt_add_gb").removeAttr("disabled"); 
+		$("#sel_up_package").removeAttr("disabled"); 
+		$("#txt_add_gb").val("0");
+		$('#sel_up_package').val('0'); 
+		$('#txt_request_other').val(''); 
+	})
+
 
 </Script>

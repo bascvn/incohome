@@ -80,6 +80,7 @@ function send_upgrade_request(){
 		$body = $RequestContent;
 		
 		$toArr = array($to);
+		
 		$return_data = cm_send_mail($toArr,$subject,$body);
 		if(strpos($return_data,"200")<0){
 			echo "Xin lỗi, hệ thống mail của chúng tôi đang bị trục trặc, bạn vui lòng thử lại";
@@ -88,6 +89,9 @@ function send_upgrade_request(){
 		{
 			echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
 		}
+		
+		
+		//echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
 			
 		
 	}catch(Exception $e){

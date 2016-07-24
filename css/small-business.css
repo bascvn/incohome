@@ -159,7 +159,7 @@ tr:nth-child(even) {
  
  .my-warn-modal {
   width:500px;
-  height:250px;
+  height:200px;
 
   .modal-header {
     background-color:#ccc;
@@ -172,7 +172,12 @@ tr:nth-child(even) {
 .my-warn-modal-body {
     overflow-y: hidden;
     height: 100%;
-    max-height:200px;
+    max-height:180px;
  }
  
+ #loading-indicator {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
 
