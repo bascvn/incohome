@@ -181,3 +181,22 @@ tr:nth-child(even) {
   top: 10px;
 }
 
+.package_block{
+	display:block;
+	width:252px;
+	height:160px;
+	line-height: 80px;
+	color: white;
+	font-weight: bold;
+	background-color:#7092BE;
+	overflow:none;
+}
+
+.package_title{
+	font-size: 280%;
+}
+.package_price{
+	font-size: 150%;
+}
+	
+

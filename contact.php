@@ -4,6 +4,15 @@ include('template/header.php');
 ?>
 
 <?php
+	
+	if(!isset($_SESSION['ANTIHACK_QUES']) ){
+		$_SESSION['ANTIHACK_QUES'] = rand(10, 20);
+	};
+	
+	
+	$FirstNum = rand(1, 8);
+	$AntiHackQues = $FirstNum. "+" .($_SESSION['ANTIHACK_QUES'] - $FirstNum)." = ?";
+	
 	$name = '';
 	$email = '';
 	$phone = '';
@@ -40,21 +49,21 @@ include('template/header.php');
 
 		// Check if name has been entered
 		if (!$_POST['name']) {
-			$errName = 'Please enter your name';
+			$errName = 'Vui lòng nhập tên';
 		}
 		
 		// Check if email has been entered and is valid
 		if (!$_POST['email'] || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-			$errEmail = 'Please enter a valid email address';
+			$errEmail = 'Vui lòng nhập email hợp lệ';
 		}
 		
 		//Check if message has been entered
 		if (!$_POST['message']) {
-			$errMessage = 'Please enter your message';
+			$errMessage = 'Vui lòng nhập nội dung trao đổi';
 		}
 		//Check if simple anti-bot test is correct
-		if ($human !== 5) {
-			$errHuman = 'Your anti-spam is incorrect';
+		if ($human !== $_SESSION['ANTIHACK_QUES']) {
+			$errHuman = 'Để chứng thực nhu cầu liên hệ, vui lòng nhập kết quả đúng.';
 		}
 
 		// If there are no errors, send the email
@@ -88,14 +97,14 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="name" class="col-sm-2 control-label">Họ Tên</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="name" name="name" placeholder="Họ Tên" value="<?php echo htmlspecialchars($name); ?>">
+							<input type="text" class="form-control" id="name" name="name" placeholder="Họ Tên (bắt buộc)" value="<?php echo htmlspecialchars($name); ?>">
 							<?php echo "<p class='text-danger'>$errName</p>";?>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="email" class="col-sm-2 control-label">Email</label>
 						<div class="col-sm-10">
-							<input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com" value="<?php echo htmlspecialchars($email); ?>">
+							<input type="email" class="form-control" id="email" name="email" placeholder="example@domain.com (bắt buộc)" value="<?php echo htmlspecialchars($email); ?>">
 							<?php echo "<p class='text-danger'>$errEmail</p>";?>
 						</div>
 					</div>
@@ -103,7 +112,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="phone" class="col-sm-2 control-label">Phone</label>
 						<div class="col-sm-10">
-							<input type="phone" class="form-control" id="phone" name="phone" placeholder="" value="<?php echo htmlspecialchars($phone); ?>">
+							<input type="phone" class="form-control" id="phone" name="phone" placeholder="Tùy chọn" value="<?php echo htmlspecialchars($phone); ?>">
 							<?php echo "<p class='text-danger'>$errPhone</p>";?>
 						</div>
 					</div>
@@ -111,14 +120,14 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="message" class="col-sm-2 control-label">Nội Dung</label>
 						<div class="col-sm-10">
-							<textarea class="form-control" rows="4" name="message"><?php echo htmlspecialchars($message);?></textarea>
+							<textarea class="form-control" rows="4" name="message" placeholder="Bắt buộc"><?php echo htmlspecialchars($message);?></textarea>
 							<?php echo "<p class='text-danger'>$errMessage</p>";?>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="human" class="col-sm-2 control-label">2 + 3 = ?</label>
+						<label for="human" class="col-sm-2 control-label"><?php echo $AntiHackQues; ?></label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control" id="human" name="human" placeholder="Câu Trả Lời">
+							<input type="text" class="form-control" id="human" name="human" placeholder="Câu Trả Lời (bắt buộc)">
 							<?php echo "<p class='text-danger'>$errHuman</p>";?>
 						</div>
 					</div>

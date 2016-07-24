@@ -3,6 +3,54 @@
 include('template/header.php');
 ?>
 
+<?php
+
+   $db     = cm_connect();
+	
+	$PackageLite;
+	$PackageBasic;
+	$PackageAdvanced;
+	$PackagePremium;
+	$PackageAddGB;
+	$PackageHostOwnServer;
+	
+	
+	//get package 
+	$query  = "SELECT `Package`.*
+			FROM `Package`
+			WHERE   `Package`.RemovalFlag = 0";
+	
+	//echo $query;
+	$result = mysqli_query($db, $query);
+	$package_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($package_data,$row);
+		
+		if($row['PackageID'] == 1){
+			$PackageLite = $row;
+		}
+		else if($row['PackageID'] == 2){
+			$PackageBasic = $row;
+		}
+		else if($row['PackageID'] == 3){
+			$PackageAdvanced = $row;
+		}
+		else if($row['PackageID'] == 4){
+			$PackagePremium = $row;
+		}
+		else if($row['PackageID'] == 5){
+			$PackageAddGB = $row;
+		}
+		
+		else if($row['PackageID'] == 6){
+			$PackageHostOwnServer = $row;
+		}
+	}
+	
+	
+	cm_close_connect($db);
+?>
+
 <script>
 var top_menu = document.getElementById("a_toplink_price");
 top_menu.style.color = "White";
@@ -32,17 +80,23 @@ top_menu.style.color = "White";
 
             <div class="col-md-3 col-sm-6 hero-feature">
                 <div class="thumbnail">
-                    <img src="img/price_lite.png" alt="">
+                    <!--
+					<img src="img/price_lite.png" alt="">
+					-->
+					<div class="package_block"> 
+						<p class="package_title"><?php echo strtoupper($PackageLite['PackageName']); ?></p>
+						<p class="package_price">  <?php echo  number_format( $PackageLite['PackagePrice'],0,',','.'); ?>  VND/Tháng</p>
+					</div>
                     <div class="caption">
-                        <h3>Gói LITE</h3>
+                        <h3>Gói <?php echo $PackageLite['PackageName']; ?></h3>
                         <p>Dành cho công ty nhỏ, với: </p>
 						<ul>
-						<li class="li_list" >5 Users</li>
-						<li class="li_list">2 GB Dữ Liệu</li>
-						<li class="li_list">Không giới hạn dự án</li>
-						<li class="li_list">100.000 VND/Tháng</li>
+							<li class="li_list" ><?php echo   $PackageLite['MaxUser'] ; ?> Users</li>
+							<li class="li_list"><?php echo   $PackageLite['MaxGB'] ; ?> GB Dữ Liệu</li>
+							<li class="li_list">Không giới hạn dự án</li>
+							<li class="li_list"><?php echo  number_format( $PackageLite['PackagePrice'],0,',','.'); ?>  VND/Tháng</li>
                         </ul>
-                            <a href="contact.php?message=Tôi muốn mua gói LITE" class="btn btn-primary">Buy Now!</a> 
+                            <a href="contact.php?message=Tôi muốn mua gói <?php echo $PackageLite['PackageName']; ?>" class="btn btn-primary">Buy Now!</a> 
 							<!--
 							<a href="#" class="btn btn-default">More Info</a>
 							-->
@@ -54,17 +108,24 @@ top_menu.style.color = "White";
 
             <div class="col-md-3 col-sm-6 hero-feature">
                 <div class="thumbnail">
-                    <img src="img/price_basic.png" alt="">
+                    <!--
+					<img src="img/price_basic.png" alt="">
+					-->
+					<div class="package_block"> 
+						<p class="package_title"><?php echo strtoupper($PackageBasic['PackageName']); ?></p>
+						<p class="package_price">  <?php echo  number_format( $PackageBasic['PackagePrice'],0,',','.'); ?>  VND/Tháng</p>
+					</div>
+					
                     <div class="caption">
-                         <h3>Gói BASIC</h3>
+                          <h3>Gói <?php echo $PackageBasic['PackageName']; ?></h3>
                         <p>Dành cho công ty trung bình, với: </p>
 						<ul>
-						<li class="li_list" >12 Users</li>
-						<li class="li_list">5 GB Dữ Liệu</li>
-						<li class="li_list">Không giới hạn dự án</li>
-						<li class="li_list">200.000 VND/Tháng</li>
+							<li class="li_list" ><?php echo   $PackageBasic['MaxUser'] ; ?> Users</li>
+							<li class="li_list"><?php echo   $PackageBasic['MaxGB'] ; ?> GB Dữ Liệu</li>
+							<li class="li_list">Không giới hạn dự án</li>
+							<li class="li_list"><?php echo  number_format( $PackageBasic['PackagePrice'],0,',','.'); ?>  VND/Tháng</li>
                         </ul>
-                            <a href="contact.php?message=Tôi muốn mua gói BASIC" class="btn btn-primary">Buy Now!</a> 
+                            <a href="contact.php?message=Tôi muốn mua gói <?php echo $PackageBasic['PackageName']; ?>" class="btn btn-primary">Buy Now!</a> 
 							<!--
 							<a href="#" class="btn btn-default">More Info</a>
 							-->
@@ -76,17 +137,25 @@ top_menu.style.color = "White";
 
             <div class="col-md-3 col-sm-6 hero-feature">
                 <div class="thumbnail">
-                    <img src="img/price_advanced.png" alt="">
+                    <!--
+					<img src="img/price_advanced.png" alt="">
+					-->
+					<div class="package_block"> 
+						<p class="package_title"><?php echo strtoupper($PackageAdvanced['PackageName']); ?></p>
+						<p class="package_price">  <?php echo  number_format( $PackageAdvanced['PackagePrice'],0,',','.'); ?>  VND/Tháng</p>
+					</div>
+					
                    <div class="caption">
-                         <h3>Gói ADVANCED</h3>
+                          <h3>Gói <?php echo $PackageAdvanced['PackageName']; ?></h3>
                         <p>Dành cho công ty vừa, với: </p>
 						<ul>
-						<li class="li_list" >25 Users</li>
-						<li class="li_list">10 GB Dữ Liệu</li>
-						<li class="li_list">Không giới hạn dự án</li>
-						<li class="li_list">400.000 VND/Tháng</li>
+							<li class="li_list" ><?php echo   $PackageAdvanced['MaxUser'] ; ?> Users</li>
+							<li class="li_list"><?php echo   $PackageAdvanced['MaxGB'] ; ?> GB Dữ Liệu</li>
+							<li class="li_list">Không giới hạn dự án</li>
+							<li class="li_list"><?php echo  number_format( $PackageAdvanced['PackagePrice'],0,',','.'); ?>  VND/Tháng</li>
+						
                         </ul>
-                            <a href="contact.php?message=Tôi muốn mua gói ADVANCED" class="btn btn-primary">Buy Now!</a> 
+                            <a href="contact.php?message=Tôi muốn mua gói <?php echo $PackageAdvanced['PackageName']; ?>" class="btn btn-primary">Buy Now!</a> 
 							<!--
 							<a href="#" class="btn btn-default">More Info</a>
 							-->
@@ -98,17 +167,24 @@ top_menu.style.color = "White";
 
             <div class="col-md-3 col-sm-6 hero-feature">
                 <div class="thumbnail">
-                     <img src="img/price_premium.png" alt="">
+                     <!--
+					 <img src="img/price_premium.png" alt="">
+					 -->
+					 <div class="package_block"> 
+						<p class="package_title"><?php echo strtoupper($PackagePremium['PackageName']); ?></p>
+						<p class="package_price">  <?php echo  number_format( $PackagePremium['PackagePrice'],0,',','.'); ?>  VND/Tháng</p>
+					</div>
+					
                     <div class="caption">
-                         <h3>Gói PREMIUM</h3>
+                         <h3>Gói <?php echo $PackagePremium['PackageName']; ?></h3>
                         <p>Dành cho công ty lớn, với: </p>
 						<ul>
-						<li class="li_list" >không giới hạn User</li>
-						<li class="li_list">35 GB Dữ Liệu</li>
-						<li class="li_list">Không giới hạn dự án</li>
-						<li class="li_list">1.200.000 VND/Tháng</li>
+							<li class="li_list" ><?php echo   $PackagePremium['MaxUser'] ; ?> Users</li>
+							<li class="li_list"><?php echo   $PackagePremium['MaxGB'] ; ?> GB Dữ Liệu</li>
+							<li class="li_list">Không giới hạn dự án</li>
+							<li class="li_list"><?php echo  number_format( $PackagePremium['PackagePrice'],0,',','.'); ?>  VND/Tháng</li>
                         </ul>
-                            <a href="contact.php?message=Tôi muốn mua gói PREMIUM" class="btn btn-primary">Buy Now!</a> 
+                            <a href="contact.php?message=Tôi muốn mua gói <?php echo $PackagePremium['PackageName']; ?>" class="btn btn-primary">Buy Now!</a> 
 							<!--
 							<a href="#" class="btn btn-default">More Info</a>
 							-->
@@ -130,9 +206,9 @@ top_menu.style.color = "White";
 		
 		<div class="row">
             <div class="col-lg-12">
-                 <h4 class="p_list">Mỗi GB dữ liệu: 30.000 VND / Tháng</h4>
+                 <h4 class="p_list">Mỗi GB dữ liệu: <?php echo  number_format( $PackageAddGB['PackagePrice'],0,',','.'); ?>  VND / Tháng</h4>
 				 <h4 class="p_list">Nâng cấp gói: chỉ áp dụng cho gói nhỏ chuyển sang gói lớn hơn cùng thời gian. Thời gian sử dụng còn lại của gói cũ sẽ được tính ra tiền theo phương pháp bình quân và cấn trừ vào giá thành gói mới. Gói mới sẽ được ghi nhận lại từ đầu.</h4>
-				 <h4 class="p_list">Cài đặt riêng hệ thống INCO trên Server của công ty bạn: 2.000.000 VND / tháng</h4>
+				 <h4 class="p_list">Cài đặt riêng hệ thống INCO trên Server của công ty bạn: <?php echo  number_format( $PackageHostOwnServer['PackagePrice'],0,',','.'); ?>  VND / tháng</h4>
             </div>
         </div>
 		

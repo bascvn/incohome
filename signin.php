@@ -89,11 +89,25 @@ function forgot_password() {
 	var txt_clientcode = document.getElementById("txt_clientcode").value;
 	
 	
-	if(txt_username.length<=0 || txt_username.length<=0){
-		alert("Vui lòng nhập đầy đủ Username và mã công ty");
+	if(txt_username.length<=0 || txt_clientcode.length<=0){
+		//alert("Vui lòng nhập đầy đủ Username và mã công ty");
+		
+		$("#md_warning_body_text").text("Vui lòng nhập đầy đủ username và mã công ty.");
+		$("#md_warning_body_text").removeClass("alert-success");
+		$("#md_warning_body_text").addClass("alert-warning");	
+		$("#md_warning").modal({backdrop: 'static', keyboard: false});
+			
+		
 	}
+	
 	else if(!validateEmail(txt_username)){
-		alert("Vui lòng nhập đúng username là email.");
+		//alert("Vui lòng nhập đúng username là email.");
+		
+		$("#md_warning_body_text").text("Vui lòng nhập đúng username là email.");
+		$("#md_warning_body_text").removeClass("alert-success");
+		$("#md_warning_body_text").addClass("alert-warning");	
+		$("#md_warning").modal({backdrop: 'static', keyboard: false});
+		
 	}
 	else{
 		window.location = "lostpass.php?username="+txt_username+ "&clientcode=" + txt_clientcode;
