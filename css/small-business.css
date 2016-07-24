@@ -140,7 +140,7 @@ tr:nth-child(even) {
 
 .my-modal {
   width:600px;
-  height:300px;
+  height:420px;
 
   .modal-header {
     background-color:#ccc;
@@ -150,8 +150,27 @@ tr:nth-child(even) {
   }
 }
 
-.modal-body2 {
+.my-modal-body {
     overflow-y: hidden;
     height: 100%;
-    max-height:260px;
+    max-height:320px;
+ }
+ 
+ 
+ .my-warn-modal {
+  width:500px;
+  height:250px;
+
+  .modal-header {
+    background-color:#ccc;
+    button {
+      font-size:30px;
+    }
   }
+}
+
+.my-warn-modal-body {
+    overflow-y: hidden;
+    height: 100%;
+    max-height:200px;
+ }

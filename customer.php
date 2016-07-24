@@ -20,6 +20,7 @@ include('template/header.php');
    $DateExpired = 0;
    $MaxGB = 0;
    $MaxUser = 0;
+   $PackageID = 0;
    $PackageName = '';
    $ClientID = 0;
    $DBName = '';
@@ -118,6 +119,7 @@ include('template/header.php');
 		 $MaxGB = $row['MaxGB']; 
 		 $MaxUser = $row['MaxUser']; 
 		 $PackageName = $row['PackageName']; 
+		 $PackageID = $row['PackageID']; 
 		 
 		$DBName = $row['DBName']; 
 		$DBUser = $row['DBUser']; 
@@ -171,7 +173,21 @@ include('template/header.php');
 	while ($row = mysqli_fetch_array($result)) {
 		array_push($payment_data,$row);
 	}
-
+	
+	
+	//get package 
+	$query  = "SELECT `Package`.*
+			FROM `Package`
+			WHERE   `Package`.RemovalFlag = 0";
+	
+	//echo $query;
+	
+	$result = mysqli_query($db, $query);
+	$package_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($package_data,$row);
+	}
+	
 	cm_close_connect($db);
 	
 	$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
@@ -413,6 +429,7 @@ top_menu.style.color = "White";
 			</div>
 		</div>
 
+		
 
    
 <!--  package upgrade dialog -->
@@ -422,12 +439,12 @@ top_menu.style.color = "White";
             <div class="modal-header">
             <h4 class="modal-title" id="myModalLabel">Nâng Cấp Sử Dụng</h4>
             </div>
-            <div class="modal-body modal-body2">
+            <div class="modal-body my-modal-body">
                 
 				<form class="form-horizontal" role="form" method="post">	
 					
 					<div class="form-group">
-						<label for="name" class="col-sm-5 control-label">Gói Hiện Tại</label>
+						<label for="name" class="col-sm-5 control-label">Gói hiện tại</label>
 						<div class="col-sm-7">
 							<label for="name" class="col-sm-5 control-label"><?php echo $PackageName; ?></label>
 						</div>
@@ -435,30 +452,48 @@ top_menu.style.color = "White";
 					
 					
 					<div class="form-group">
-						<label for="name" class="col-sm-5 control-label">Chọn Gói Cao Hơn</label>
+						<label for="name" class="col-sm-5 control-label">Chọn gói cao hơn</label>
 						<div class="col-sm-7">
 							
-							<select class="form-control" id="sel1">
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-								<option>4</option>
-							 </select>
+							<select class="form-control" name="sel_up_package" id="sel_up_package">
+							<option value="0"></option>
+
+<?php
+							for($i=0;$i<sizeof($package_data);$i++){
+								$package = $package_data[$i];
+								
+								if($package['PackageID'] >$PackageID && $package['AdditionalType'] == 0){
+									echo "<option value='". $package['PackageID']  ."'>". $package['PackageName']. " - Giá: ". number_format($package['PackagePrice'],0,',','.')  ."(VND) / Tháng</option>";	
+								}
+							}				
+?>
+							</select>
 	  
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="name" class="col-sm-5 control-label">Mua Thêm Bộ Nhớ (GB)</label>
+						<label for="name" class="col-sm-5 control-label">Mua thêm bộ nhớ (GB)</label>
 						<div class="col-sm-7">
-							<input type="number" class="form-control" id="name" name="name" placeholder="1" value="0">
+							<input type="number" min="0" class="form-control" id="txt_add_gb" name="txt_add_gb" placeholder="1" value="0">
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="name" class="col-sm-5 control-label">Yêu Cầu Khác</label>
+						<label for="name" class="col-sm-5 control-label">Muốn đặt trên server riêng</label>
+						
+						<div class="col-sm-1" style="border: 0; box-shadow: none;">
+						  <input type="checkbox"  class="form-control" style="border: 0; box-shadow: none;" value="" id="cb_host_own_server" name="cb_host_own_server">
+						</div>
+					</div>
+					
+					
+					
+
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Yêu cầu khác</label>
 						<div class="col-sm-7">
-								<textarea class="form-control" rows="4" name="message"><?php echo "";?></textarea>
+								<textarea class="form-control" rows="4" name="txt_request_other" id="txt_request_other"></textarea>
 						</div>
 					</div>
 				</form>		
@@ -467,7 +502,27 @@ top_menu.style.color = "White";
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Gởi Chúng Tôi</button>
+                <button type="button" id="bt_send_up_request"  class="btn btn-primary">Gởi chúng tôi</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="md_warning" tabindex="-1" role="dialog" aria-labelledby="md_warning" aria-hidden="true">
+    <div class="modal-dialog my-warn-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Thông báo</h4>
+            </div>
+            <div class="modal-body my-warn-modal-body">
+                <div class="alert alert-warning" id="md_warning_body_text" >
+				  
+				</div>
+	
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
         </div>
     </div>
   </div>
@@ -478,3 +533,69 @@ top_menu.style.color = "White";
 // do php stuff
 include('template/footer.php');
 ?>
+
+<!--  package upgrade dialog -->
+<Script>
+	
+	$("#cb_host_own_server").change(function() {
+		
+		if(this.checked) {
+			//Do stuff
+			$("#txt_add_gb").attr("disabled", "disabled"); 
+			$("#sel_up_package").attr("disabled", "disabled"); 
+			
+			$("#txt_add_gb").val("0");
+			$('#sel_up_package').val('0'); // selects "Two"
+			
+		}else{
+			$("#txt_add_gb").removeAttr("disabled"); 
+			$("#sel_up_package").removeAttr("disabled"); 
+		};
+	});
+	
+	$("#bt_send_up_request").click(function() {
+		var up_package = $('#sel_up_package').val();
+		var add_gb =  $("#txt_add_gb").val();
+		var txt_request_other = $('#txt_request_other').val();
+		var cb_host_own_server = $("#cb_host_own_server").prop('checked');
+		
+		if(up_package==0 && add_gb==0 && txt_request_other.length ==0 && !cb_host_own_server){
+			 	
+			$("#md_warning_body_text").text("Vui lòng mô tả yêu cầu nâng cấp.");
+			$("#md_warning").modal("toggle");
+			
+			return;
+		}
+		
+		var ClientCode = '<?php echo $ClientCode;?>';
+		var send_content = "ClientCode "+ClientCode +" yêu cầu: \n";
+		if(up_package>0){
+			send_content += "Nâng cấp gói: "+ $('#sel_up_package option:selected').text() + "\n";
+		}
+		
+		if(add_gb>0){
+			send_content += "Mua thêm GB: " + add_gb +"\n";
+		}
+		
+		if(cb_host_own_server){
+			send_content += "đặt trên server riêng \n";
+		}
+		
+		if(txt_request_other.length >0){
+			send_content += "Yêu cầu khác: " + txt_request_other +"\n";
+		}
+		
+		//alert(send_content);
+		
+		$("#md_warning_body_text").text(send_content);
+		$("#md_warning").modal("toggle");
+			
+		
+		
+		
+			
+	});
+	
+	
+
+</Script>
