@@ -10,7 +10,9 @@ if(isset($_GET['controller']))
 	$url=explode('.',$_GET['controller']);
 	if(count($url)<2)
 		return;
-
+	
+	
+	
 	/*
 	//passed APIs
 	if( 
@@ -22,7 +24,8 @@ if(isset($_GET['controller']))
 	{
 		//$url=explode('.',$_GET['controller']);
 		require_once 'api/' . $url[0] .'.php';    
-		return;
+		
+		
 	}
 
 

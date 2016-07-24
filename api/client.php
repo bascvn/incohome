@@ -22,9 +22,10 @@ function get_used_memory($ClientCode)
 
 //======================================================================================
 function get_client_info(){
+
 	
 	//update
-	try{
+	//try{
 		$ClientCode = $_POST["ClientCode"];
 		$DBName = $_POST["DBName"];
 		$DBUser = $_POST["DBUser"];
@@ -58,18 +59,21 @@ function get_client_info(){
 			
 		}
 	
-	
+	/*
 	}catch(Exception $e){
 		echo $e;
-	}finally {
+	}
+	finally {
 		mysqli_close($db);
-		exit(0);
-	}	
+		//exit(0);
+	}
+	*/
+
 }
 
 //======================================================================================
 function send_upgrade_request(){
-	try{
+	//try{
 		$ClientCode = $_POST["ClientCode"];
 		$RequestContent = $_POST["RequestContent"];
 		
@@ -94,14 +98,16 @@ function send_upgrade_request(){
 		//echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
 			
 		
+	/*
 	}catch(Exception $e){
 		echo $e;
-	}finally {
+	}
+	finally {
 		//mysqli_close($db);
-		exit(0);
-	}	
+		//exit(0);
+	}
+	*/
 	
 }
-
 
 ?>

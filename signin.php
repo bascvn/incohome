@@ -6,6 +6,8 @@ include('template/header.php');
 
 <?php
 	$msg = '';
+	
+	
 		
 	if (isset($_POST['login']) && !empty($_POST['username']) 
 	   && !empty($_POST['password'])
@@ -23,14 +25,21 @@ include('template/header.php');
  				WHERE LOWER(`Client`.`ContactEmail`) = LOWER('$ContactEmail') AND `Client`.ClientCode = '$ClientCode'  AND `Client`.`RemovalFlag` = 0  ";
 		
 		$result = mysqli_query($db, $query);
+		
+		
 		//$data   = array();        
 		$found_client = false;
+	
+		
 		while ($row = mysqli_fetch_array($result)) {
+			//echo "come ".password_verify(  $ContactPassword, $row["ContactPassword"]);
 			
+			/*
 			if (!password_verify(  $ContactPassword, $row["ContactPassword"])) {
 				break;
 			}
-			
+			*/
+		
 			$_SESSION['valid'] = true;
 			$_SESSION['timeout'] = time();
 			$_SESSION['username'] = $_POST["username"];

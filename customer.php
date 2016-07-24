@@ -190,8 +190,12 @@ include('template/header.php');
 	
 	cm_close_connect($db);
 	
+	//var_dump($params_arr);
+	
 	$uri_get_user_info = cm_get_full_api_url($ClientCode, "client.get_client_info"); 
+	//$uri_get_user_info =  "http://incodemo.kiemtraduan.net/gateway.php?controller=client.get_client_info";
 	$UserInfo = cm_http_post($uri_get_user_info,$params_arr);	
+	 
 	$UserInfo = substr($UserInfo, strpos($UserInfo,"{"));
 	$UserInfo_Json = json_decode($UserInfo,true);
 	//var_dump($UserInfo_Json);
