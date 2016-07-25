@@ -145,7 +145,7 @@ include('template/header.php');
 	
 	
 	$DateCurrent=time();
-	$DateUsed = floor(($DateCurrent - $DateUpdated) / (24*60*60));
+	$DateUsed =   floor(($DateCurrent - $DateUpdated) / (24*60*60));
 	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
 	
 	
@@ -201,8 +201,13 @@ include('template/header.php');
 	$used_memory = 0;
 	$user_count = 0;
 	if ($UserInfo_Json['status'] == 200){
-		$used_memory = $UserInfo_Json['used_memory'];
+		$upload_size = $UserInfo_Json['upload_size'];
+		$db_size = $UserInfo_Json['db_size'];
+		$used_memory = $upload_size + $db_size;
+		
+		
 		$user_count = $UserInfo_Json['user_count'];
+		
 	}
 	
 ?>
@@ -235,20 +240,62 @@ top_menu.style.color = "White";
 						<label for="createdate" class="col-sm-4 control-label">Số User Đã Tạo:</label>
 						<div class="col-sm-8">
 							<label name="createdate" class="control-label"><?php echo $user_count ." / ".$MaxUser ; ?></label>
+							
+							
+							<div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php   echo $user_count; ?>"
+							  aria-valuemin="0" aria-valuemax="<?php echo $MaxUser ; ?>" style="width:<?php echo (($user_count*100)/$MaxUser);  ?>%">
+								<!--
+								<?php echo $user_count ." / ".$MaxUser ; ?>
+								-->
+								
+							  </div>
+							</div>
+
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
+						<label for="" class="col-sm-4 control-label">Dung Lượng Đã Dùng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $used_memory." / ".$MaxGB." GB" ; ?> </label>
+							<label name="" class="control-label"><?php echo cm_convert_byte_to_readable($used_memory)." / ".$MaxGB." GB" ; ?> </label>
+							<p>
+								<label name="" class="control-label">Upload File: <?php echo cm_convert_byte_to_readable($upload_size); ?> </label>
+							</p>
+							
+							<p>
+								<label name="" class="control-label">Database: <?php echo cm_convert_byte_to_readable($db_size); ?> </label>
+							</p>
+							
+							<div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php   echo $used_memory; ?>"
+							  aria-valuemin="0" aria-valuemax="<?php echo ($MaxGB*1024*1024*1024) ; ?>" style="width:<?php echo (($used_memory*100)/($MaxGB*1024*1024*1024));  ?>%">
+								<!--
+								<?php echo $user_count ." / ".$MaxUser ; ?>
+								-->
+								
+							  </div>
+							</div>
+							
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
+						<label for="" class="col-sm-4 control-label">Số Ngày Sử Dụng:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $DateUsed." / ".$DateTotal ; ?> </label>
+							
+							<label name="" class="control-label"><?php echo $DateUsed." / ".$DateTotal ; ?> </label>
+							
+							<div class="progress">
+							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php   echo $DateUsed; ?>"
+							  aria-valuemin="0" aria-valuemax="<?php echo $DateTotal ; ?>" style="width:<?php echo (($DateUsed*100)/$DateTotal);  ?>%">
+								<!--
+								<?php echo $DateUsed." / ".$DateTotal ; ?>
+								-->
+							  </div>
+							</div>
+							
+							
 						</div>
 					</div>
 					

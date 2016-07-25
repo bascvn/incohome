@@ -11,12 +11,14 @@
 	 /*
 	 //for DEV 
 	 define("INCO_DOMAIN", "localhost"); // this is used for DEV
-	 define("SUB_INCO_PATH", "inco/"); // this is used for DEV
+	 define("SUB_INCO_PATH", "inco"); // this is used for DEV
 	 define("HOST_OS", "window"); // this is used for DEV
 	 define("SUPPORT_EMAIL", "nvlong@gmail.com"); // this is used for DEV
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV
-	 define("ROOT_SERVER_PATH", "C:/wamp/www/inco/"); // this is used for DEV
+	 define("ROOT_SERVER_PATH", "C:/wamp/www/"); // this is used for DEV
+	 define("INCO_UPLOAD_PATH", "/uploads/"); // this is used for DEV
 	 */
+	 
 	 
 	 
 	  // for PROD
@@ -26,6 +28,7 @@
 	 define("SUPPORT_EMAIL", "support@bansac.vn"); // this is used for DEV
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV 
 	 define("ROOT_SERVER_PATH", "/var/www/kiemtraduan.net/public_html/"); // this is used for DEV
+	 define("INCO_UPLOAD_PATH", "/uploads/"); // this is used for DEV
 	 
 	 
 	 
@@ -45,7 +48,7 @@
 		
 		//for DEV 
 		//$_uri = "http://localhost/inco/gateway.php?controller=client.get_used_memory"; 
-		//$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."gateway.php?controller=".$target;
+		//$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
 		
 		return 	$_uri;	
 	}
@@ -55,7 +58,7 @@
     function cm_connect(){
 		
 		// Create connection
-		 //$con=mysqli_connect('127.0.0.1','root','12345','incoclient');
+		// $con=mysqli_connect('127.0.0.1','root','12345','incoclient');
 		 $con=mysqli_connect('127.0.0.1','incoclient','~vbfgrt45@','incoclient');
 		   
 
@@ -361,7 +364,7 @@ function curl_exec_utf8($ch) {
 }
 
 //==============================================================================================================
-function cm_get_dir_size($path)
+function cm_get_dir_size_readable($path)
 {
 	$os = HOST_OS;
 	$m_size = 0;
@@ -379,24 +382,7 @@ function cm_get_dir_size($path)
 		}
 		
 		
-		if($Bsize>0)
-		{
-			$Msize = $Bsize / (1024*1024);
-			
-			if($Msize<1){
-				$Ksize =  number_format($Msize*1024, 2, '.', '');
-				return $Ksize . " KB";
-			}
-			else if($Msize>1024){
-				
-				 $Gsize =  number_format($Msize/1024, 2, '.', '');
-				return ($Gsize . " GB");
-			}
-			else{
-				$Msize =  number_format($Msize, 2, '.', '');	
-				return $Msize . " MB" ;
-			}
-		}
+		cm_convert_byte_to_readable($Bsize);
 	
 		
 	}else if(strcmp($os,"linux")==0){
@@ -415,6 +401,63 @@ function cm_get_dir_size($path)
 	return "";
 }
 
+
+//==============================================================================================================
+function cm_get_dir_size($path)
+{
+	$os = HOST_OS;
+	$m_size = 0;
+	$Bsize = 0;
+	
+	if(strcmp($os,"window")==0){
+		//$f = 'f:/www/docs';
+		$obj = new COM ( 'scripting.filesystemobject' );
+		if ( is_object ( $obj ) )
+		{
+			$ref = $obj->getfolder ( $path );
+			$Bsize = $ref->size;
+			$obj = null;	
+		}
+	}else if(strcmp($os,"linux")==0){
+		
+		$io = popen ( '/usr/bin/db -sh ' . $path, 'r' );
+		$size = fgets ( $io, 4096);
+		$Bsize = substr ( $size, 0, strpos ( $size, "\t" ) );
+		pclose ( $io );
+		//echo 'Directory: ' . $f . ' => Size: ' . $size;
+	}
+				
+	
+	return $Bsize;
+}
+
+
+//==============================================================================================================
+function cm_convert_byte_to_readable($Bsize){
+	if($Bsize>=1024)
+	{
+		$Msize = $Bsize / (1024*1024);
+		
+		if($Msize<1){
+			$Ksize =  number_format($Msize*1024, 2, '.', '');
+			return $Ksize . " KB";
+		}
+		else if($Msize>1024){
+			
+			 $Gsize =  number_format($Msize/1024, 2, '.', '');
+			return ($Gsize . "GB");
+		}
+		else{
+			$Msize =  number_format($Msize, 2, '.', '');	
+			return $Msize . "MB" ;
+		}
+	}
+	
+	if($Bsize>0)
+		return $Bsize. " B";
+	else 
+		return "0B";
+}
 
 
 //echo cm_encrypt_password('123456789');

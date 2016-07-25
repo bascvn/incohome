@@ -17,7 +17,7 @@ $varFunction();
 //======================================================================================
 function get_used_memory($ClientCode)
 {	
-	return cm_get_dir_size(ROOT_SERVER_PATH.$ClientCode);
+	return cm_get_dir_size(ROOT_SERVER_PATH.$ClientCode.INCO_UPLOAD_PATH);
 }
 
 //======================================================================================
@@ -30,8 +30,8 @@ function get_client_info(){
 		$DBName = $_POST["DBName"];
 		$DBUser = $_POST["DBUser"];
 		$DBPass = $_POST["DBPass"];
-		
-		$used_memory = get_used_memory($ClientCode);
+		$upload_size = get_used_memory($ClientCode);
+		$db_size = 0;
 		
 		$db = mysqli_connect('127.0.0.1',$DBUser,$DBPass,$DBName);
 		// Check connection
@@ -53,11 +53,29 @@ function get_client_info(){
 			}
 			
 			
+			$query  = "SELECT table_schema AS DBName, SUM( data_length + index_length) AS DBSizeInByte
+							FROM information_schema.TABLES 
+							WHERE table_schema = '$ClientCode'
+							GROUP BY table_schema";
+
+			$result = mysqli_query($db, $query);
+			
+			
+			while ($row = mysqli_fetch_array($result)) {
+				$db_size = $row['DBSizeInByte']; 
+				break;
+			}
+			
+			
+			
 		
 			//echo json_encode('{"status":200,"message":"ok","used_memory": "'.$used_memory.'","user_count":'. $UserCount.'}');
-			echo '{"status":200,"message":"ok","used_memory": "'.$used_memory.'","user_count":'. $UserCount.'}';
+			echo '{"status":200,"message":"ok","upload_size": "'.$upload_size.'","user_count":'. $UserCount.',"db_size":"'. $db_size . '" }';
 			
 		}
+		mysqli_close($db);
+		exit(0);
+		
 	
 	/*
 	}catch(Exception $e){
@@ -93,7 +111,7 @@ function send_upgrade_request(){
 		{
 			echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
 		}
-		
+		exit(0);
 		
 		//echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
 			
