@@ -440,7 +440,7 @@ function cm_convert_byte_to_readable($Bsize){
 		
 		if($Msize<1){
 			$Ksize =  number_format($Msize*1024, 2, '.', '');
-			return $Ksize . " KB";
+			return $Ksize . "KB";
 		}
 		else if($Msize>1024){
 			
