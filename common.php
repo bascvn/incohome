@@ -8,7 +8,7 @@
 	 
 	 define("SRV_PROTOCOL", "http://"); // this is used for DEV
 	 
-	 /*
+	 
 	 //for DEV 
 	 define("INCO_DOMAIN", "localhost"); // this is used for DEV
 	 define("SUB_INCO_PATH", "inco"); // this is used for DEV
@@ -17,10 +17,11 @@
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV
 	 define("ROOT_SERVER_PATH", "C:/wamp/www/"); // this is used for DEV
 	 define("INCO_UPLOAD_PATH", "/uploads/"); // this is used for DEV
-	 */
 	 
 	 
 	 
+	 
+	 /*
 	  // for PROD
 	 define("INCO_DOMAIN", "kiemtraduan.net");  
 	 define("SUB_INCO_PATH", "");  
@@ -29,7 +30,7 @@
 	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV 
 	 define("ROOT_SERVER_PATH", "/var/www/kiemtraduan.net/public_html/"); // this is used for DEV
 	 define("INCO_UPLOAD_PATH", "/uploads/"); // this is used for DEV
-	 
+	 */
 	 
 	 
 	 
@@ -43,12 +44,12 @@
 	//==============================================================================================================
 	function cm_get_full_api_url($ClientCode, $target){
 		
-		$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		//$_uri = SRV_PROTOCOL.$ClientCode.".".INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
 		
 		
 		//for DEV 
 		//$_uri = "http://localhost/inco/gateway.php?controller=client.get_used_memory"; 
-		//$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
+		$_uri = SRV_PROTOCOL.INCO_DOMAIN ."/". SUB_INCO_PATH ."/gateway.php?controller=".$target;
 		
 		return 	$_uri;	
 	}
@@ -58,8 +59,8 @@
     function cm_connect(){
 		
 		// Create connection
-		// $con=mysqli_connect('127.0.0.1','root','12345','incoclient');
-		 $con=mysqli_connect('127.0.0.1','incoclient','~vbfgrt45@','incoclient');
+		 $con=mysqli_connect('127.0.0.1','root','12345','incoclient');
+		// $con=mysqli_connect('127.0.0.1','incoclient','~vbfgrt45@','incoclient');
 		   
 
 
@@ -460,7 +461,7 @@ function cm_convert_byte_to_readable($Bsize){
 }
 
 
-//echo cm_encrypt_password('123456789');
+//echo cm_encrypt('123');
 //echo cm_encrypt('~1qazxsw23@');
 //echo cm_get_dir_size(ROOT_SERVER_PATH."incodemo" );
 
