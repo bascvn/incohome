@@ -18,13 +18,12 @@ include('template/admin-header.php');
 		
 	   
 	   $ContactEmail = $_POST["username"];
-	   $ContactPassword = $_POST["password"];
+	   $ContactPassword = md5($_POST["password"]);
 	  // $ClientCode = $_POST["clientcode"];
-	   $mypass = '064057060062066061058065';
-	   $hash_pass = cm_encrypt_password(cm_decrypt($mypass));
+	   $mypass = '$2a$07$wUIse5gMBr4qbQXOQjkP2.QtAh1S/ZamqbHzVf6wyYPw3z56wOxbe';
 	   
 	  // $db     = cm_connect();
-	   if ( strcmp($ContactEmail,'nvlong@bansac.vn') ==0 && !cm_verify_password(  $ContactPassword, $hash_pass )) {
+	   if ( strcmp($ContactEmail,'nvlong@bansac.vn') ==0 && !cm_verify_password(  $ContactPassword, $mypass )) {
 			$msg = 'Sai email hoặc mật khẩu.';
 			
 		}else{
