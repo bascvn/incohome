@@ -86,11 +86,11 @@ if(sizeof($parts)>0){
                 <ul class="nav navbar-nav">
                   
 					<li>
-                        <a   id="a_toplink_admin"  href="signin.php">Admin</a>
+                        <a   id="a_toplink_admin"  href="admin.php">Admin</a>
                     </li>
 <?php
 
-	if( isset($_SESSION['valid'])  && $_SESSION['valid']){
+	if( isset($_SESSION['admin-valid'])  && $_SESSION['admin-valid']){
 		
 			echo 	'<li>
                         <a   id="a_toplink_signout"  href="admin-signout.php">Thoát</a>

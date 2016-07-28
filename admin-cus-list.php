@@ -5,8 +5,8 @@ include('template/admin-header.php');
 
 <?php
 
-   if( !isset($_SESSION['valid'])  || !$_SESSION['valid']){
-		header("Location: admin-signin.php");
+   if( !isset($_SESSION['admin-valid'])  || !$_SESSION['admin-valid']){
+		header("Location: admin.php");
 		die();
    }
    
@@ -77,11 +77,11 @@ top_menu.style.color = "White";
 								<td>".$row['ClientCode']."</td>
 								<td>".$row['ClientName']."</td>
 								
-								<td ><div class='img-circle' style='background-color: "
+								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
 								.($row['Status']==0 ?"red": (($row['Status']==1) ? "green":"yellow"))
 								."; width: 20px; text-align: center;'>". $row['Status']."</div></td>
 								
-								<td><a href='admin-customer.php?ClientCode=". $row['ClientCode'] ."'>View / Edit<a></td>
+								<td><a href='admin-customer.php?clientcode=". $row['ClientCode'] ."'>View / Edit<a></td>
 							</tr>";
 						
 					} ?>

@@ -29,7 +29,7 @@ include('template/admin-header.php');
 			
 		}else{
 			//$msg = 'OK';
-			$_SESSION['valid'] = true;
+			$_SESSION['admin-valid'] = true;
 			$_SESSION['timeout'] = time();
 			$_SESSION['username'] = $_POST["username"];
 			$_SESSION['clientcode'] = 'admin';
@@ -47,7 +47,7 @@ include('template/admin-header.php');
 	}
 	
 	
-	if( isset($_SESSION['valid'])  && $_SESSION['valid']){
+	if( isset($_SESSION['admin-valid'])  && $_SESSION['admin-valid']){
 		header("Location: admin-cus-list.php");
 		die();
 	 }
