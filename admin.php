@@ -20,7 +20,7 @@ include('template/admin-header.php');
 	   $ContactEmail = $_POST["username"];
 	   $ContactPassword = md5($_POST["password"]);
 	  // $ClientCode = $_POST["clientcode"];
-	   $mypass = '$2a$07$wUIse5gMBr4qbQXOQjkP2.QtAh1S/ZamqbHzVf6wyYPw3z56wOxbe';
+	   $mypass = '$2a$07$JUz86HT3krtcYWNmqCszX.EJKgdsUHmV21YbKyi53UMvW4i0uPZX6';
 	   
 	  // $db     = cm_connect();
 	   if ( strcmp($ContactEmail,'nvlong@bansac.vn') ==0 && !cm_verify_password(  $ContactPassword, $mypass )) {

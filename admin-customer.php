@@ -210,6 +210,9 @@ include('template/admin-header.php');
 	
 	$used_memory = 0;
 	$user_count = 0;
+	$upload_size = 0;
+	$db_size = 0;
+	
 	if ($UserInfo_Json['status'] == 200){
 		$upload_size = $UserInfo_Json['upload_size'];
 		$db_size = $UserInfo_Json['db_size'];

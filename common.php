@@ -461,9 +461,10 @@ function cm_convert_byte_to_readable($Bsize){
 }
 
 
-//echo cm_encrypt('123');
-//echo cm_encrypt('~1qazxsw23@');
+
 //echo cm_get_dir_size(ROOT_SERVER_PATH."incodemo" );
-//echo cm_encrypt_password('6243f77b1f577a81400365aaf6bbeced');
+//echo cm_encrypt_password('1309929f39d74f243cf6c6e6d54f6bc9');
+//echo cm_decrypt('060061062063058059064065066');
+
 
 ?>
