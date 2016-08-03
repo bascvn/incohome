@@ -9,7 +9,7 @@ top_menu.style.color = "White";
 </script>
 
 
-		<h4 class="text-success">Chúng tôi đang xây dựng trang này. Bạn vui lòng trở lại sau.</h4>
+		<h4 class="text-success"> <a   href="docs/Inco_Manual_10.pdf" target="_blank">Download Hướng Dẫn Sử Dụng 1.0</a></h4>
 		
 
 <?php

@@ -49,7 +49,7 @@ include('template/admin-header.php');
 
 
 <script>
-var top_menu = document.getElementById("a_toplink_admin_cus_list");
+var top_menu = document.getElementById("a_toplink_admin_email");
 top_menu.style.color = "White";
 
 </script>

@@ -92,7 +92,17 @@ if(sizeof($parts)>0){
 
 	if( isset($_SESSION['admin-valid'])  && $_SESSION['admin-valid']){
 		
-			echo 	'<li>
+			echo 	
+					'<li>
+                        <a   id="a_toplink_admin_cus_list"  href="admin-cus-list.php">Customer List</a>
+                    </li>
+					<li>
+                        <a   id="a_toplink_admin_email"  href="admin-email.php">Email List</a>
+                    </li>
+					<li>
+                        <a   id="a_toplink_admin_user"  href="admin-user.php">User List</a>
+                    </li>
+					<li>
                         <a   id="a_toplink_signout"  href="admin-signout.php">Thoát</a>
                     </li>';
 	}
