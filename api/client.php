@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //==============================================================================================================
 // this header's code must be embeded in every AJAX controler file
 //==============================================================================================================
@@ -17,7 +17,7 @@ $varFunction();
 //======================================================================================
 function get_used_memory($ClientCode)
 {	
-	return cm_get_dir_size(ROOT_SERVER_PATH.$ClientCode.INCO_UPLOAD_PATH);
+	return cm_get_dir_size(ROOT_SERVER_PATH.$ClientCode);
 }
 
 //======================================================================================
@@ -90,42 +90,87 @@ function get_client_info(){
 }
 
 //======================================================================================
-function send_upgrade_request(){
-	//try{
-		$ClientCode = $_POST["ClientCode"];
-		$RequestContent = $_POST["RequestContent"];
+function get_clients(){
+	
+	try{
 		
-		
-		$from = FROM_EMAIL; 
-		$to = SUPPORT_EMAIL; 
-		$subject = $ClientCode. ' - Request Upgrade';
-		$body = $RequestContent;
-		
-		$toArr = array($to);
-		
-		$return_data = cm_send_mail($toArr,$subject,$body);
-		if(strpos($return_data,"200")<0){
-			echo "Xin lỗi, hệ thống mail của chúng tôi đang bị trục trặc, bạn vui lòng thử lại";
+	
+		if(isset($_POST["SearchWord"])){	
+			$SearchWord = $_POST["SearchWord"];
+			if(strlen($SearchWord)<3){
+				echo '{"status":500,"message":"search words should be greater than 2."}';
+				return;
+			}
 		}
-		else
+		else 
 		{
-			echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
+			echo '{"status":550,"message":"no search word"}';
+			return;
 		}
-		exit(0);
 		
-		//echo "Cảm ơn, chúng tôi sẽ liên lạc với bạn sớm.";
-			
+		$db     = cm_connect();
+		$query  = "SELECT  ClientName, ClientCode,Logo,Status,BuildNumber FROM Client WHERE ClientCode LIKE '%".$SearchWord."%'";
+		$result = mysqli_query($db, $query);
+		$data = array();
+		while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
+				array_push($data,$row);
+		}
 		
-	/*
+		mysqli_close($db);
+		echo '{"status":200,"message":"ok","data":'.json_encode($data).'}';
+	
 	}catch(Exception $e){
-		echo $e;
+		//echo $e;
+		echo '{"status":404,"message":"fail"}';
 	}
-	finally {
-		//mysqli_close($db);
-		//exit(0);
-	}
-	*/
 	
 }
+
+//======================================================================================
+function get_client_staus(){
+	
+	try{
+		
+	
+		if(isset($_POST["ClientCode"])){	
+			$ClientCode = $_POST["ClientCode"];
+			if(strlen($ClientCode)<3){
+				echo '{"status":500,"message":"should send client code"}';
+				return;
+			}
+		}
+		else 
+		{
+			echo '{"status":550,"message":"no client code"}';
+			return;
+		}
+		
+		$db     = cm_connect();
+		$query  = "SELECT ClientName, ClientCode,Logo,Status,BuildNumber FROM Client WHERE ClientCode = '$ClientCode'";
+		$result = mysqli_query($db, $query);
+		//$data = array();
+		while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
+				
+				$row['msg'] ='';
+				$row['url_ios'] ='';
+				$row['url_android'] ='https://play.google.com/store/apps/details?id=vn.bansac.inco&hl=en';
+				$row['android_ver'] ='1.1';
+				$row['ios_ver'] ='';
+		
+				echo '{"status":200,"message":"ok","data":'.json_encode($row).'}';
+				//array_push($data,$row);
+				break;
+		}
+		
+		mysqli_close($db);
+		//echo '{"status":200,"message":"ok","data":'.json_encode($data).'}';
+	
+	}catch(Exception $e){
+		//echo $e;
+		echo '{"status":404,"message":"fail"}';
+	}
+	
+}
+
 
 ?>
