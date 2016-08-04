@@ -11,40 +11,73 @@ include('template/admin-header.php');
    }
    
    $db     = cm_connect();
+   $infoMsg = "";
+  
+   if (isset($_POST["submit"])) {
+		$EmailID = $_POST['EmailID'];
+		$Email = $_POST['Email'];
+		$Password = cm_encrypt($_POST['Password']);
+		$EmailType = $_POST['EmailType'];
+		
+		
+		if(strlen($Email)==0){
+			$infoMsg = "Email should not be empty";
+		}
+		else if(strlen($Password)==0){
+			$infoMsg = "Password should not be empty";
+		}
+		else if($EmailType<=0){
+			$infoMsg = "EmailType should be greater than zero";
+		}
+		else{
+				
+			$query  = " UPDATE  `Email` SET Email = '$Email',EmailType = $EmailType, Password = '$Password'
+			WHERE  EmailID=$EmailID";
+			$result = mysqli_query($db, $query);
+				
+			if($result){
+				$infoMsg = "Updated successfully";
+			}
+			else{
+				$infoMsg = "Updated fail";
+			}	
+		}
+   }
+   else if (isset($_POST["submit_delete"])) {
+	   $EmailID = $_POST['EmailID'];
+	   $query  = " UPDATE  `Email` SET RemovalFlag = 1
+			WHERE  EmailID=$EmailID";
+		
+		$result = mysqli_query($db, $query);
+	   
+	   
+   }
+   else if (isset($_POST["add_new_mail"])) {
+	   
+	   $query  = " INSERT INTO `Email` (EmailType) VALUES(1)";
+		$result = mysqli_query($db, $query);
+		
+		var_dump($result);
+		
+			
+   }
+   
    
    //get client info
-   $query  = "SELECT `Client`.*,`Package`.PackageName
-			FROM `Client`,`Package`
-			WHERE `Client`.`RemovalFlag` = 0  AND `Package`.`PackageID` =  `Client`.`PackageID`";
+   $query  = "SELECT `Email`.*
+			FROM `Email` 
+			WHERE `Email`.`RemovalFlag` = 0
+			ORDER BY EmailID";
 	
 	$result = mysqli_query($db, $query);
 	
-	$client_data   = array();  
+	$data   = array();  
 	
 	while ($row = mysqli_fetch_array($result)) {
-		array_push($client_data,$row);
+		array_push($data,$row);
 	}
 	
-	
-	/*
-	if($secondFromGMT!=0){
-		$tz = timezone_name_from_abbr('', $secondFromGMT, 1);
-		// Workaround for bug #44780
-		if($tz === false) $tz = timezone_name_from_abbr('', $secondFromGMT, 0);
-		// Set timezone
-		date_default_timezone_set($tz);
-	}
-	else{
-		date_default_timezone_set("UTC");
-	}
-		
-	$DateCurrent=time();
-	$DateUsed =   floor(($DateCurrent - $DateUpdated) / (24*60*60));
-	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
-	*/
-
 	cm_close_connect($db);
-	
 ?>
 
 
@@ -53,36 +86,42 @@ var top_menu = document.getElementById("a_toplink_admin_email");
 top_menu.style.color = "White";
 
 </script>
-
 		
 		<div class="row">
-  			<div class="col-md-6 col-md-offset-3">
-  				<h2 class="page-header text-center">Danh Sách Khách Hàng</h2>
+  			<div class="col-md-10 col-md-offset-0">
+  				<h2 class="page-header text-center">Danh Sách Email</h2>
 				
-				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
+				<br/>
+				<p><?php echo "<p class='text-success'>".$infoMsg."</p>";?></p>
+				<p>Note: Type=1: email for admin. Type=2: email for sender </p>
+			
+				
+				<table class="col-md-10 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
-					<th>STT</th>
-					<th>Mã Công Ty</th>
-					<th >Tên Công Ty</th>
-					<th >Tình Trạng</th>
-					<th >Detail</th>
+					<th>ID</th>
+					<th>Email</th>
+					<th >Password</th>
+					<th >Type</th>
+					<th >Update</th>
 					</tr>
 					
-					<?php for($i=0;$i<sizeof($client_data);$i++){
-						$row = $client_data[$i];
+					<?php for($i=0;$i<sizeof($data);$i++){
+						$row = $data[$i];
+						$pass = cm_decrypt($row['Password']);
 						
 						
-						echo "<tr>
-								<td>".($i+1)."</td>
-								<td>".$row['ClientCode']."</td>
-								<td>".$row['ClientName']."</td>
+						echo "<form  role='form' method='post' action=". $_SERVER['PHP_SELF'].">
+							<tr>
 								
-								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
-								.($row['Status']==0 ?"red": (($row['Status']==1) ? "green":"yellow"))
-								."; width: 20px; text-align: center;'>". $row['Status']."</div></td>
-								
-								<td><a href='admin-customer.php?clientcode=". $row['ClientCode'] ."'>View / Edit<a></td>
-							</tr>";
+								<td> <input type='text' readonly name='EmailID' class='form-control' style='width:50px;' value='".$row['EmailID']."'></input></td>
+								<td> <input type='text'  name='Email'  class='form-control' value='".$row['Email']."'></input></td>
+								<td> <input type='text'  name='Password'  class='form-control' value='".$pass."'></input></td>
+								<td> <input type='text'  name='EmailType'  class='form-control' style='width:50px;' value='".$row['EmailType']."'></input></td>
+								<td> <button type='submit'  name='submit' class='btn btn-warning'>Change</button>
+									<button type='submit'  name='submit_delete' class='btn btn-danger'>Delete</button>
+								</td>
+							</tr> 
+							</form>";
 						
 					} ?>
 					
@@ -92,9 +131,14 @@ top_menu.style.color = "White";
 			 
 		</div>
 		<br/>
+		
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-					<p><button class = "btn btn-lg btn-primary btn-block"   name = "add_new-client">Add New Client</button></p>
+			<div class="col-md-4 col-md-offset-3">
+				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+					<button type="submit" class = "btn btn-lg btn-primary btn-block"   name = "add_new_mail">Add New Email</button>
+					<button type="submit" class = "btn btn-lg btn-success btn-block"   name = "refresh">Refresh</button>
+				</form>
+				
 			</div>
 		</div>
 
