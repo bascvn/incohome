@@ -11,40 +11,82 @@ include('template/admin-header.php');
    }
    
    $db     = cm_connect();
+   $infoMsg = "";
+  
+   if (isset($_POST["submit"])) {
+		$UserID = $_POST['UserID'];
+		$UserEmail = $_POST['UserEmail'];
+		$UserPassword = $_POST['UserPassword'];
+		$UserRoleID = $_POST['UserRoleID'];
+		
+		
+		if(strlen($UserEmail)==0){
+			$infoMsg = "UserEmail should not be empty";
+		}
+		else if($UserRoleID<=0){
+			$infoMsg = "UserRoleID should be greater than zero";
+		}
+		else{
+				
+			
+			$query  = " UPDATE  `User` SET UserEmail = '$UserEmail',UserRoleID = $UserRoleID";
+			
+			if(strlen($UserPassword)>0){
+				$UserPassword = cm_encrypt_password(md5($UserPassword));
+				
+				$query  .= ", UserPassword = '$UserPassword' ";
+			}
+			
+			$query  .= " WHERE  UserID = $UserID";
+			
+			
+			$result = mysqli_query($db, $query);
+				
+			if($result){
+				$infoMsg = "Updated successfully";
+			}
+			else{
+				$infoMsg = "Updated fail";
+			}	
+		}
+   }
+   else if (isset($_POST["submit_delete"])) {
+	   $UserID = $_POST['UserID'];
+	   $query  = " UPDATE  `User` SET RemovalFlag = 1
+			WHERE  UserID=$UserID";
+		
+		$result = mysqli_query($db, $query);
+	   
+	   
+   }
+   else if (isset($_POST["add_new_user"])) {
+	   
+	   $UserPassword =  cm_generateRandomString();
+	   $UserPassword = cm_encrypt_password(md5($UserPassword)); 
+	   $query  = " INSERT INTO `User` (UserPassword,UserRoleID) VALUES('$UserPassword' ,3)";
+		$result = mysqli_query($db, $query);
+		
+		//var_dump($result);
+		
+			
+   }
+   
    
    //get client info
-   $query  = "SELECT `Client`.*,`Package`.PackageName
-			FROM `Client`,`Package`
-			WHERE `Client`.`RemovalFlag` = 0  AND `Package`.`PackageID` =  `Client`.`PackageID`";
+   $query  = "SELECT `User`.*
+			FROM `User` 
+			WHERE `User`.`RemovalFlag` = 0
+			ORDER BY UserID";
 	
 	$result = mysqli_query($db, $query);
 	
-	$client_data   = array();  
+	$data   = array();  
 	
 	while ($row = mysqli_fetch_array($result)) {
-		array_push($client_data,$row);
+		array_push($data,$row);
 	}
 	
-	
-	/*
-	if($secondFromGMT!=0){
-		$tz = timezone_name_from_abbr('', $secondFromGMT, 1);
-		// Workaround for bug #44780
-		if($tz === false) $tz = timezone_name_from_abbr('', $secondFromGMT, 0);
-		// Set timezone
-		date_default_timezone_set($tz);
-	}
-	else{
-		date_default_timezone_set("UTC");
-	}
-		
-	$DateCurrent=time();
-	$DateUsed =   floor(($DateCurrent - $DateUpdated) / (24*60*60));
-	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
-	*/
-
 	cm_close_connect($db);
-	
 ?>
 
 
@@ -53,36 +95,42 @@ var top_menu = document.getElementById("a_toplink_admin_user");
 top_menu.style.color = "White";
 
 </script>
-
 		
 		<div class="row">
-  			<div class="col-md-6 col-md-offset-3">
-  				<h2 class="page-header text-center">Danh Sách Khách Hàng</h2>
+  			<div class="col-md-12 col-md-offset-0">
+  				<h2 class="page-header text-center">Danh Sách User</h2>
 				
-				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
+				<br/>
+				<p><?php echo "<p class='text-success'>".$infoMsg."</p>";?></p>
+				<p>Note: UserRoleID=1: Root || UserRoleID=2: ClientAdmin || UserRoleID=3: User </p>
+			
+				
+				<table class="col-md-12 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
-					<th>STT</th>
-					<th>Mã Công Ty</th>
-					<th >Tên Công Ty</th>
-					<th >Tình Trạng</th>
-					<th >Detail</th>
+					<th>UserID</th>
+					<th>UserEmail</th>
+					<th >UserPassword</th>
+					<th >UserRoleID</th>
+					<th >Update</th>
 					</tr>
 					
-					<?php for($i=0;$i<sizeof($client_data);$i++){
-						$row = $client_data[$i];
+					<?php for($i=0;$i<sizeof($data);$i++){
+						$row = $data[$i];
+						//$pass = cm_decrypt($row['Password']);
 						
 						
-						echo "<tr>
-								<td>".($i+1)."</td>
-								<td>".$row['ClientCode']."</td>
-								<td>".$row['ClientName']."</td>
+						echo "<form  role='form' method='post' action=". $_SERVER['PHP_SELF'].">
+							<tr>
 								
-								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
-								.($row['Status']==0 ?"red": (($row['Status']==1) ? "green":"yellow"))
-								."; width: 20px; text-align: center;'>". $row['Status']."</div></td>
-								
-								<td><a href='admin-customer.php?clientcode=". $row['ClientCode'] ."'>View / Edit<a></td>
-							</tr>";
+								<td> <input type='text' readonly name='UserID' class='form-control' style='width:50px;' value='".$row['UserID']."'></input></td>
+								<td> <input type='text'  name='UserEmail'  class='form-control' value='".$row['UserEmail']."'></input></td>
+								<td> <input type='text'  name='UserPassword'  class='form-control' value=''></input></td>
+								<td> <input type='text'  name='UserRoleID'  class='form-control' style='width:50px;' value='".$row['UserRoleID']."'></input></td>
+								<td> <button type='submit'  name='submit' class='btn btn-warning'>Change</button>
+									<button type='submit'  name='submit_delete' class='btn btn-danger'>Delete</button>
+								</td>
+							</tr> 
+							</form>";
 						
 					} ?>
 					
@@ -92,9 +140,18 @@ top_menu.style.color = "White";
 			 
 		</div>
 		<br/>
+		
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-					<p><button class = "btn btn-lg btn-primary btn-block"   name = "add_new-client">Add New Client</button></p>
+			<div class="col-md-12 col-md-offset-0">
+				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+					<div class="form-group">
+						<button type="submit" class = "col-sm-2 col-md-offset-3 btn btn-primary"   name = "add_new_user">Add New User</button>
+						
+						<button type="submit" class = "col-sm-2 col-md-offset-1 btn btn-primary btn-success"    name = "refresh">Refresh</button>
+					</div>
+					
+				</form>
+				
 			</div>
 		</div>
 

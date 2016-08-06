@@ -13,7 +13,8 @@ top_menu.style.color = "White";
 
    unset($_SESSION["username"]);
    unset($_SESSION["password"]);
-   $_SESSION['admin-valid'] = false;
+   unset($_SESSION["clientcode"]);
+   //$_SESSION['admin-valid'] = false;
    unset($_SESSION["admin-valid"]);
    
 	 

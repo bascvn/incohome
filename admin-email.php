@@ -57,7 +57,7 @@ include('template/admin-header.php');
 	   $query  = " INSERT INTO `Email` (EmailType) VALUES(1)";
 		$result = mysqli_query($db, $query);
 		
-		var_dump($result);
+		//var_dump($result);
 		
 			
    }
@@ -88,7 +88,7 @@ top_menu.style.color = "White";
 </script>
 		
 		<div class="row">
-  			<div class="col-md-10 col-md-offset-0">
+  			<div class="col-md-12 col-md-offset-0">
   				<h2 class="page-header text-center">Danh Sách Email</h2>
 				
 				<br/>
@@ -96,7 +96,7 @@ top_menu.style.color = "White";
 				<p>Note: Type=1: email for admin. Type=2: email for sender </p>
 			
 				
-				<table class="col-md-10 col-md-offset-0" border="1" style="width:100%;">
+				<table class="col-md-12 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
 					<th>ID</th>
 					<th>Email</th>
@@ -133,10 +133,14 @@ top_menu.style.color = "White";
 		<br/>
 		
 		<div class="row">
-			<div class="col-md-4 col-md-offset-3">
+			<div class="col-md-12 col-md-offset-0">
 				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-					<button type="submit" class = "btn btn-lg btn-primary btn-block"   name = "add_new_mail">Add New Email</button>
-					<button type="submit" class = "btn btn-lg btn-success btn-block"   name = "refresh">Refresh</button>
+					<div class="form-group">
+						<button type="submit" class = "col-sm-2 col-md-offset-3 btn btn-primary"   name = "add_new_mail">Add New Email</button>
+						
+						<button type="submit" class = "col-sm-2 col-md-offset-1 btn btn-primary btn-success"    name = "refresh">Refresh</button>
+					</div>
+					
 				</form>
 				
 			</div>

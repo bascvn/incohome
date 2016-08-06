@@ -16,14 +16,27 @@ include('template/admin-header.php');
 		) 
 	{
 		
-	   
+		$db     = cm_connect();
 	   $ContactEmail = $_POST["username"];
 	   $ContactPassword = md5($_POST["password"]);
-	  // $ClientCode = $_POST["clientcode"];
-	   $mypass = '$2a$07$JUz86HT3krtcYWNmqCszX.EJKgdsUHmV21YbKyi53UMvW4i0uPZX6';
-	   
-	  // $db     = cm_connect();
-	   if ( strcmp($ContactEmail,'nvlong@bansac.vn') ==0 && !cm_verify_password(  $ContactPassword, $mypass )) {
+	  // $ClientCode = $_POST["clientcode"]; 
+	  //$mypass = '$2a$07$JUz86HT3krtcYWNmqCszX.EJKgdsUHmV21YbKyi53UMvW4i0uPZX6';
+	   $query  = "SELECT * FROM `User` WHERE LOWER(UserEmail) = LOWER('$ContactEmail') ";
+		$result = mysqli_query($db, $query);
+		
+		$foundOne = false;
+		while ($row = mysqli_fetch_array($result)) {
+			//array_push($data,$row);
+			$mypass = $row['UserPassword'];
+			if ( cm_verify_password(  $ContactPassword, $mypass )) {
+				$foundOne = true;
+				break;
+			}
+		}
+			
+	  
+	  
+	   if (!$foundOne) {
 			$msg = 'Sai email hoặc mật khẩu.';
 			
 		}else{
@@ -39,7 +52,7 @@ include('template/admin-header.php');
 		}
 			
 	
-		//cm_close_connect($db);
+		cm_close_connect($db);
 	}
 	else if (isset($_POST['login'])){
 		$msg = 'Vui lòng nhập đầy đủ email, password.';
