@@ -17,6 +17,7 @@
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>

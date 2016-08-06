@@ -19,6 +19,7 @@
 	
 	<!-- Custom CSS -->
     <link href="css/flexslider.css" rel="stylesheet">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 	
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

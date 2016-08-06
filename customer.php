@@ -128,7 +128,7 @@ include('template/header.php');
 	}
 	
 	if(!$found_client){
-		$msg = 'Công ty không đã hết hạn.';
+		$msg = 'Công ty đã hết hạn.';
 	}else{
 		
 		if($secondFromGMT!=0){

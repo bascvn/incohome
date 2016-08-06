@@ -15,6 +15,8 @@ include('template/admin-header.php');
    $ClientCode = '';
    if(isset($_GET['clientcode'])){
 		$ClientCode = $_GET['clientcode'];
+	}else if(isset($_POST['ClientCode'])){
+		$ClientCode = $_POST['ClientCode'];
 	}
 	else{
 		header("Location: admin-cus-list.php");
@@ -36,6 +38,8 @@ include('template/admin-header.php');
    $DBUser = '';
    $DBPassword = '';
    $result_msg = '';
+   $tz_name = "Asia/Ho_Chi_Minh";
+   $tz = new DateTimeZone($tz_name);
   
    $db     = cm_connect();
    
@@ -43,17 +47,30 @@ include('template/admin-header.php');
    //change values
    if (isset($_POST["submit"])) {
 		
-		$client_name = $_POST['client_name'];
-		$client_phone = $_POST['client_phone'];
-		$client_email = $_POST['client_email'];
+		$ClientName = $_POST['ClientName'];
+		$ContactPhone = $_POST['ContactPhone'];
+		$ContactEmail = $_POST['ContactEmail'];
 		$OldPassword = $_POST['OldPassword'];
 		$NewPassword = $_POST['NewPassword'];
 		$ReNewPassword = $_POST['ReNewPassword'];	
 		
+		$DateCreated = $_POST['DateCreated'];
+		$DateCreatedObj = date_create_from_format("d/m/Y",$DateCreated);
+		//echo  $DateCreatedObj->getTimestamp();
+		
+		$DateUpdated = $_POST['DateUpdated'];
+		$DateUpdatedObj = date_create_from_format("d/m/Y",$DateUpdated);
+		
+		
+		$DateExpired = $_POST['DateExpired'];
+		$DateExpiredObj = date_create_from_format("d/m/Y",$DateExpired);
+		
+		
+		
 		$doUpdate = true;
 		$pass_hash = '';
 		
-		if (!filter_var($client_email, FILTER_VALIDATE_EMAIL)) {
+		if (!filter_var($ContactEmail, FILTER_VALIDATE_EMAIL)) {
 			$result_msg = '<div class="alert alert-warning">Email không hợp lệ.</div>'; 
 			$doUpdate = false;
 			
@@ -83,29 +100,26 @@ include('template/admin-header.php');
 		
 		if($doUpdate){
 				$query  = "UPDATE `Client` SET 
-				 `Client`.ClientName = '$client_name' 
-				 ,`Client`.ContactEmail = '$client_email' 
-				 ,`Client`.ContactPhone = '$client_phone' "
+				 `Client`.ClientName = '$ClientName' 
+				 ,`Client`.ContactEmail = '$ContactEmail' 
+				 ,`Client`.ContactPhone = '$ContactPhone' 
+				 ,`Client`.DateCreated = ".$DateCreatedObj->getTimestamp()
+				 .",`Client`.DateUpdated = ".$DateUpdatedObj->getTimestamp()
+				 .",`Client`.DateExpired = ".$DateExpiredObj->getTimestamp()
+				 
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientCode = '$ClientCode'";
 				 
 			
 				 $result = mysqli_query($db, $query);
 				if($result){
-					$ContactEmail = $_SESSION['username'] =  $client_email;
-					if(strlen($pass_hash)>0){
-						$_SESSION['password'] = $NewPassword; 
-					}
-					
 					$result_msg ='<div class="alert alert-success">Đã cập nhật thành công.</div>';
 				}else{
 					$result_msg ='<div class="alert alert-warning">Không thể cập nhật được.</div>';
 				}
 		
 		}
-		 
-		 
-		 
+	
    }
    
    
@@ -124,9 +138,24 @@ include('template/admin-header.php');
 		 $ContactEmail =  $row['ContactEmail'];
 		 $ContactPhone = $row['ContactPhone'];
 		 $secondFromGMT = $row['GMT']; 
-		 $DateCreated =  $row['DateCreated']; 
-		 $DateUpdated =  $row['DateUpdated']; 
-		 $DateExpired =  $row['DateExpired']; 
+		 
+		$DateCreated_Col =  $row['DateCreated'];
+		$dt = new DateTime("@$DateCreated_Col");
+		$dt->setTimezone($tz);
+		$DateCreated =  $dt->format('d/m/Y');
+		
+		$DateUpdated_Col =  $row['DateUpdated'];		
+		$dt = new DateTime("@$DateUpdated_Col");
+		$dt->setTimezone($tz);
+		$DateUpdated =  $dt->format('d/m/Y');
+		 
+		//$DateExpired =  $row['DateExpired']; 
+		$DateExpired_Col =  $row['DateExpired'];		
+		$dt = new DateTime("@$DateExpired_Col");
+		$dt->setTimezone($tz);
+		$DateExpired =  $dt->format('d/m/Y');
+		
+		 
 		 $MaxGB = $row['MaxGB']; 
 		 $MaxUser = $row['MaxUser']; 
 		 $PackageName = $row['PackageName']; 
@@ -138,7 +167,7 @@ include('template/admin-header.php');
 	}
 	
 	if(!$found_client){
-		$msg = 'Công ty không đã hết hạn.';
+		$msg = 'Công ty đã hết hạn.';
 	}else{
 		
 		if($secondFromGMT!=0){
@@ -155,8 +184,8 @@ include('template/admin-header.php');
 	
 	
 	$DateCurrent=time();
-	$DateUsed =   floor(($DateCurrent - $DateUpdated) / (24*60*60));
-	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
+	$DateUsed =   floor(($DateCurrent - $DateUpdated_Col) / (24*60*60));
+	$DateTotal = ceil(($DateExpired_Col - $DateUpdated_Col) / (24*60*60));
 	
 	
 	//get used memory
@@ -227,8 +256,8 @@ include('template/admin-header.php');
 
 
 <script>
-var top_menu = document.getElementById("a_toplink_customer");
-top_menu.style.color = "White";
+//var top_menu = document.getElementById("a_toplink_customer");
+//top_menu.style.color = "White";
 </script>
 
 		<h1><a href="admin-cus-list.php" class="glyphicon glyphicon-backward"></a></h1>
@@ -257,9 +286,6 @@ top_menu.style.color = "White";
 							<div class="progress">
 							  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php   echo $user_count; ?>"
 							  aria-valuemin="0" aria-valuemax="<?php echo $MaxUser ; ?>" style="width:<?php echo (($user_count*100)/$MaxUser);  ?>%">
-								<!--
-								<?php echo $user_count ." / ".$MaxUser ; ?>
-								-->
 								
 							  </div>
 							</div>
@@ -326,6 +352,7 @@ top_menu.style.color = "White";
 			</div>
 		</div>
 		
+		<!-- editable -->
 		
 		<div class="row">
   			<div class="col-md-6 col-md-offset-3">
@@ -333,31 +360,45 @@ top_menu.style.color = "White";
 				
 				<form class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 					
+					<input type="hidden" name="ClientID" value="<?php echo $ClientID; ?>"/>
+					  
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Mã Công Ty:</label>
 						<div class="col-sm-8">
-							<label name="createdate" class="control-label"><?php echo  $ClientCode; ?></label>
+							<input class="form-control" id="ClientCode" name="ClientCode" value="<?php echo $ClientCode; ?>"  readonly="readonly" >
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Ngày Tạo:</label>
 						<div class="col-sm-8">
-							<label name="createdate" class="control-label"><?php echo date('d/m/Y', $DateCreated ); ?></label>
+							<input  class="form-control" type="text" data-role="date" id="DateCreated" name="DateCreated" 
+							readonly="readonly" data-inline="true" style="background-color : #ffffff;"
+								value="<?php echo $DateCreated; ?>">
+							
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Ngày Cập Nhật:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo date('d/m/Y',  $DateUpdated ); ?></label>
+							<input  class="form-control" type="text" data-role="date" id="DateUpdated" name="DateUpdated" 
+							readonly="readonly" data-inline="true" style="background-color : #ffffff;"
+								value="<?php echo $DateUpdated; ?>">
+								
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Ngày Hết Hạn:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo date('d/m/Y',  $DateExpired ); ?></label>
+							
+							
+							<input  class="form-control" type="text" data-role="date" id="DateExpired" name="DateExpired" 
+							readonly="readonly" data-inline="true" style="background-color : #ffffff;"
+								value="<?php echo $DateExpired; ?>">
+								
+							
 						</div>
 					</div>
 					
@@ -387,7 +428,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="name" class="col-sm-4 control-label">Tên Công Ty</label>
 						<div class="col-sm-8">
-							<input type="text" class="form-control" id="client_name" name="client_name" placeholder="Tên Công Ty" value="<?php echo htmlspecialchars($ClientName); ?>">
+							<input type="text" class="form-control" id="ClientName" name="ClientName" placeholder="Tên Công Ty" value="<?php echo htmlspecialchars($ClientName); ?>">
 							
 							
 						</div>
@@ -395,7 +436,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="email" class="col-sm-4 control-label">Email</label>
 						<div class="col-sm-8">
-							<input type="email" class="form-control" id="client_email" name="client_email" placeholder="example@domain.com" value="<?php echo htmlspecialchars($ContactEmail); ?>">
+							<input type="email" class="form-control" id="ContactEmail" name="ContactEmail" placeholder="example@domain.com" value="<?php echo htmlspecialchars($ContactEmail); ?>">
 							
 						</div>
 					</div>
@@ -403,7 +444,7 @@ top_menu.style.color = "White";
 					<div class="form-group">
 						<label for="phone" class="col-sm-4 control-label">Phone</label>
 						<div class="col-sm-8">
-							<input type="phone" class="form-control" id="client_phone" name="client_phone" placeholder="" value="<?php echo htmlspecialchars($ContactPhone); ?>">
+							<input type="phone" class="form-control" id="ContactPhone" name="ContactPhone" placeholder="" value="<?php echo htmlspecialchars($ContactPhone); ?>">
 							
 							
 						</div>
@@ -684,6 +725,13 @@ include('template/admin-footer.php');
 		$('#sel_up_package').val('0'); 
 		$('#txt_request_other').val(''); 
 	})
+	
+	
+	$( function() {
+		$( "#DateCreated,#DateExpired,#DateUpdated" ).datepicker({
+			dateFormat: 'dd/mm/yy'
+		});
+	  } );
 
 
 </Script>
