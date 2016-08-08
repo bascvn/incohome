@@ -50,7 +50,7 @@ include('template/admin-header.php');
 		$ClientName = $_POST['ClientName'];
 		$ContactPhone = $_POST['ContactPhone'];
 		$ContactEmail = $_POST['ContactEmail'];
-		$OldPassword = $_POST['OldPassword'];
+		
 		$NewPassword = $_POST['NewPassword'];
 		$ReNewPassword = $_POST['ReNewPassword'];	
 		
@@ -65,7 +65,9 @@ include('template/admin-header.php');
 		$DateExpired = $_POST['DateExpired'];
 		$DateExpiredObj = date_create_from_format("d/m/Y",$DateExpired);
 		
-		
+		$MaxUser =  $_POST['MaxUser'];
+		$MaxGB  =  $_POST['MaxGB'];
+		$ClientPackageID =  $_POST['ClientPackageID'];
 		
 		$doUpdate = true;
 		$pass_hash = '';
@@ -78,12 +80,8 @@ include('template/admin-header.php');
 		
 		
 		
-		else if(strlen($OldPassword)>0 && strlen($NewPassword)>0 && strlen($ReNewPassword)>0 ){
-			if(strcmp($_SESSION['password'],$OldPassword)!=0){
-				$result_msg = '<div class="alert alert-warning">Password cũ không đúng.</div>'; 
-				$doUpdate = false;
-			}
-			else if(strlen($NewPassword)<6){
+		else if( strlen($NewPassword)>0 && strlen($ReNewPassword)>0 ){
+			if(strlen($NewPassword)<6){
 				$result_msg = '<div class="alert alert-warning">Password mới dưới 6 ký tự.</div>'; 
 				$doUpdate = false;
 			}
@@ -106,7 +104,10 @@ include('template/admin-header.php');
 				 ,`Client`.DateCreated = ".$DateCreatedObj->getTimestamp()
 				 .",`Client`.DateUpdated = ".$DateUpdatedObj->getTimestamp()
 				 .",`Client`.DateExpired = ".$DateExpiredObj->getTimestamp()
-				 
+				 .",`Client`.MaxUser = '$MaxUser'" 
+				 .",`Client`.MaxGB = '$MaxGB'" 
+				 .",`Client`.PackageID = '$ClientPackageID'" 
+			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientCode = '$ClientCode'";
 				 
@@ -405,22 +406,37 @@ include('template/admin-header.php');
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Gói Hiện Tại:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $PackageName; ?></label>
+							
+							<select class="form-control" name="ClientPackageID" id="ClientPackageID">
+							<option value="<?php echo $PackageID; ?>"> <?php echo $PackageName; ?> </option>
+
+<?php
+							for($i=0;$i<sizeof($package_data);$i++){
+								$package = $package_data[$i];
+								if($package['AdditionalType'] == 0){
+									echo "<option value='". $package['PackageID']  ."'>". $package['PackageName']."</option>";	
+								}
+							}				
+?>
+							</select>
+							
+							
 						</div>
 					</div>
 					
 					
 					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Lưu Trữ Tối Đa:</label>
+						<label for="updatedate" class="col-sm-4 control-label">Lưu Trữ Tối Đa (GB):</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $MaxGB." GB"; ?></label>
+							<input type="number" min="0" class="form-control" id="MaxGB" name="MaxGB" placeholder="0" value="<?php echo $MaxGB; ?>">
 						</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="updatedate" class="col-sm-4 control-label">Số User Tối Đa:</label>
 						<div class="col-sm-8">
-							<label name="updatedate" class="control-label"><?php echo $MaxUser." User"; ?></label>
+							
+							<input type="number" min="0" class="form-control" id="MaxUser" name="MaxUser" placeholder="0" value="<?php echo $MaxUser; ?>">
 						</div>
 					</div>
 					
@@ -450,14 +466,7 @@ include('template/admin-header.php');
 						</div>
 					</div>
 					
-					<div class="form-group">
-						<label for="phone" class="col-sm-4 control-label">Password Cũ</label>
-						<div class="col-sm-8">
-							<input type = "password"  class="form-control" id="OldPassword" name="OldPassword" placeholder="" >
-							
-							
-						</div>
-					</div>
+					
 					
 					<div class="form-group">
 						<label for="phone" class="col-sm-4 control-label">Password Mới</label>
