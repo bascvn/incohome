@@ -122,6 +122,45 @@ include('template/admin-header.php');
 		}
 	
    }
+   else    if (isset($_POST["submit_change_payment"])) {
+	   $PaymentHistoryID =  $_POST['PaymentHistoryID']; 
+	   $PayDescription =  $_POST['PayDescription']; 
+	   
+	   $PaymentDate = $_POST['PaymentDate'];
+		$PaymentDateObj = date_create_from_format("d/m/Y",$PaymentDate);
+		//echo  $DateCreatedObj->getTimestamp();
+		
+	   
+	   $query  = "UPDATE `PaymentHistory` SET 
+				 `PaymentHistory`.Description = '$PayDescription' "
+				  .",`PaymentHistory`.DateTime = ".$PaymentDateObj->getTimestamp()
+				 ." WHERE `PaymentHistory`.PaymentHistoryID = '$PaymentHistoryID'";
+		 
+			
+		$result = mysqli_query($db, $query);
+		if($result){
+			$result_msg ='<div class="alert alert-success">Đã cập nhật thành công.</div>';
+		}else{
+			$result_msg ='<div class="alert alert-warning">Không thể cập nhật được.</div>';
+		}
+				
+   }
+   else if (isset($_POST["submit_delete_payment"])) {
+	    $PaymentHistoryID =  $_POST['PaymentHistoryID']; 
+		
+		 $query  = "UPDATE `PaymentHistory` SET 
+				 `PaymentHistory`.RemovalFlag = 1 "
+				 ." WHERE `PaymentHistory`.PaymentHistoryID = '$PaymentHistoryID'";
+		 
+			
+		$result = mysqli_query($db, $query);
+		if($result){
+			$result_msg ='<div class="alert alert-success">Đã cập nhật thành công.</div>';
+		}else{
+			$result_msg ='<div class="alert alert-warning">Không thể cập nhật được.</div>';
+		}
+		
+   }
    
    
    //get client info
@@ -502,14 +541,16 @@ include('template/admin-header.php');
 	
 		
 		<div class="row">
-  			<div class="col-md-6 col-md-offset-3">
+  			<div class="col-md-12 col-md-offset-0">
   				<h2 class="page-header text-center">Lịch Sử Giao Dịch</h2>
 				
-				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
+				<table class="col-md-10 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
+					<th>ID</th>
 					<th>Ngày</th>
 					<th>Nội Dung Giao Dịch</th>
 					<th  style="text-align:right">Số Tiền (VND)</th>
+					<th >Update</th>
 					</tr>
 					
 					<?php for($i=0;$i<sizeof($payment_data);$i++){
@@ -526,13 +567,29 @@ include('template/admin-header.php');
 						$TotalPay = $Subtotal + $Tax  - $Discount - $DiscountTax;
 						
 						
-						
-						
-						echo "<tr>
-								<td>".date('d/m/Y',  $PaymentDate )."</td>
-								<td>$PayDescription</td>
+						echo "
+							<tr><form  role='form' method='post' action=". $_SERVER['PHP_SELF'].">
+								<input type='hidden' name='ClientCode' value='".$ClientCode."' >
+								<input type='hidden' name='ClientID' value='".$ClientID."'/>
+							
+								<td> <input type='text' readonly name='PaymentHistoryID' class='form-control' style='width:50px;' value='".$row['PaymentHistoryID']."'></input></td>
+								
+								<td >
+									<input   style='width:100px;background-color : #ffffff;' class='PayDate form-control' type='text' data-role='date' name='PaymentDate' 
+										readonly='readonly' data-inline='true' 
+										value='". date('d/m/Y',  $PaymentDate ) ."'>
+								</td>
+								
+								
+								<td> <input type='text'  name='PayDescription'  class='form-control' value='".$PayDescription."'></input></td>
+								
 								<td style='text-align:right'>".number_format($TotalPay,0,',','.')."</td>
-							</tr>";
+								
+								
+								<td> <button type='submit'  name='submit_change_payment' class='btn btn-warning'>Change</button>
+									<button type='submit'  name='submit_delete_payment' class='btn btn-danger'>Delete</button>
+								</td>
+							</form></tr>";
 						
 					} ?>
 					
@@ -737,10 +794,15 @@ include('template/admin-footer.php');
 	
 	
 	$( function() {
-		$( "#DateCreated,#DateExpired,#DateUpdated" ).datepicker({
+		$( "#DateCreated,#DateExpired,#DateUpdated,#PaymentDate, .PaymentDate" ).datepicker({
 			dateFormat: 'dd/mm/yy'
 		});
 	  } );
-
+	
+	$( function() {
+		$( ".PayDate" ).datepicker({
+			dateFormat: 'dd/mm/yy'
+		});
+	  } );
 
 </Script>
