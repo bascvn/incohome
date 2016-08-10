@@ -172,5 +172,42 @@ function get_client_staus(){
 	
 }
 
+//======================================================================================
+function add_transaction(){
+	
+	try{
+		
+		$ClientID = $_POST['ClientID'];
+		$TrantractionDate = $_POST['TrantractionDate'];
+		$TrantractionSubtotal = $_POST['TrantractionSubtotal'];
+		$TrantractionDescription = $_POST['TrantractionDescription'];
+		
+		$db     = cm_connect();
+		$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description) VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription')";
+		$result = mysqli_query($db, $query);
+		
+		if($result){
+			echo '{"status":200,"message":"ok"}';
+		}
+		else{
+			echo '{"status":404,"message":"fail"}';
+		}
+		
+		mysqli_close($db);
+	}
+	catch(Exception $e){
+		//echo $e;
+		echo '{"status":500,"message":"fail"}';
+	}
+
+	
+	
+		
+}
+
+//======================================================================================
+function send_upgrade_request(){
+	
+}
 
 ?>
