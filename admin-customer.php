@@ -137,7 +137,9 @@ include('template/admin-header.php');
    }
    else    if (isset($_POST["submit_change_payment"])) {
 	   $PaymentHistoryID =  $_POST['PaymentHistoryID']; 
-	   $PayDescription =  $_POST['PayDescription']; 
+	   $PayDescription =  $_POST['PayDescription'];
+		$ClientPackageID =  $_POST['ClientPackageID'];
+		
 	   
 	   $PaymentDate = $_POST['PaymentDate'];
 		$PaymentDateObj = date_create_from_format("d/m/Y",$PaymentDate);
@@ -147,6 +149,8 @@ include('template/admin-header.php');
 	   $query  = "UPDATE `PaymentHistory` SET 
 				 `PaymentHistory`.Description = '$PayDescription' "
 				  .",`PaymentHistory`.DateTime = ".$PaymentDateObj->getTimestamp()
+				  .",`PaymentHistory`.PackageID = ".$ClientPackageID
+				  
 				 ." WHERE `PaymentHistory`.PaymentHistoryID = '$PaymentHistoryID'";
 		 
 			
@@ -263,7 +267,7 @@ include('template/admin-header.php');
 	$query  = "SELECT `PaymentHistory`.*
 			FROM `PaymentHistory`
 			WHERE `PaymentHistory`.ClientID = $ClientID AND `PaymentHistory`.RemovalFlag = 0
-			ORDER BY `PaymentHistory`.`DateTime` DESC";
+			ORDER BY `PaymentHistory`.`PaymentHistoryID` DESC";
 	
 	//echo $query;
 	
@@ -652,6 +656,7 @@ include('template/admin-header.php');
 					<tr>
 					<th>ID</th>
 					<th>Ngày</th>
+					<th>Gói</th>
 					<th>Nội Dung Giao Dịch</th>
 					<th  style="text-align:right">Số Tiền (VND)</th>
 					<th >Update</th>
@@ -659,17 +664,28 @@ include('template/admin-header.php');
 					
 					<?php for($i=0;$i<sizeof($payment_data);$i++){
 						$row = $payment_data[$i];
-						$PaymentDate = 	$row['DateTime'];
+						
+						$PaymentDate_Col =  $row['DateTime'];
+						$dt = new DateTime("@$PaymentDate_Col");
+						$dt->setTimezone($tz);
+						$PaymentDate =  $dt->format('d/m/Y');
 						$PayDescription = $row['Description'];
-						
-						
 						$Subtotal =  $row['Subtotal'];
 						$Discount =  $row['Discount'];
 						$Tax =  $row['Tax'];
 						$DiscountTax =  $row['DiscountTax'];
-						
 						$TotalPay = $Subtotal + $Tax  - $Discount - $DiscountTax;
 						
+						$PackageID =  $row['PackageID'];
+						$PackageName =  '';
+						if($PackageID>0){
+							for($j=0;$j<sizeof($package_data);$j++){
+								$package = $package_data[$j];
+								if($package['PackageID']==$PackageID)
+									$PackageName = $package['PackageName'];
+							}
+					
+						}
 						
 						echo "
 							<tr><form  role='form' method='post' action=". $_SERVER['PHP_SELF'].">
@@ -681,11 +697,28 @@ include('template/admin-header.php');
 								<td >
 									<input   style='width:100px;background-color : #ffffff;' class='DatePicker form-control' type='text' data-role='date' name='PaymentDate' 
 										readonly='readonly' data-inline='true' 
-										value='". date('d/m/Y',  $PaymentDate ) ."'>
+										value='".$PaymentDate ."'>
+								</td>";
+								
+?>								
+								
+								<td>
+									<select class="form-control" name="ClientPackageID" id="ClientPackageID">
+									<option value="<?php echo $PackageID; ?>"> <?php echo $PackageName; ?> </option>
+
+<?php
+									for($j=0;$j<sizeof($package_data);$j++){
+										$package = $package_data[$j];
+										echo "<option value='". $package['PackageID']  ."'>". $package['PackageName']."</option>";	
+										
+									}				
+?>
+									</select>
 								</td>
+							
 								
-								
-								<td> <input type='text'  name='PayDescription'  class='form-control' value='".$PayDescription."'></input></td>
+<?php								
+						echo	"<td> <input type='text'  name='PayDescription'  class='form-control' value='".$PayDescription."'></input></td>
 								
 								<td style='text-align:right'>".number_format($TotalPay,0,',','.')."</td>
 								

@@ -181,23 +181,29 @@ function add_transaction(){
 		$TrantractionDate = $_POST['TrantractionDate'];
 		$TrantractionSubtotal = $_POST['TrantractionSubtotal'];
 		$TrantractionDescription = $_POST['TrantractionDescription'];
+		$ClientPackageID = $_POST['ClientPackageID'];
 		
 		$db     = cm_connect();
-		$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description) VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription')";
+		$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
+		VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
 		$result = mysqli_query($db, $query);
+		
 		
 		if($result){
 			echo '{"status":200,"message":"ok"}';
 		}
 		else{
-			echo '{"status":404,"message":"fail"}';
+			echo '{"status":404,"message":"Could not insert data"}';
 		}
+		
+		
+		
 		
 		mysqli_close($db);
 	}
 	catch(Exception $e){
 		//echo $e;
-		echo '{"status":500,"message":"fail"}';
+		echo '{"status":500,"message":"System Error"}';
 	}
 
 	
