@@ -68,6 +68,13 @@ include('template/admin-header.php');
 		$MaxUser =  $_POST['MaxUser'];
 		$MaxGB  =  $_POST['MaxGB'];
 		$ClientPackageID =  $_POST['ClientPackageID'];
+		$NoreplyEmailID =  $_POST['NoreplyEmailID'];
+		$AdminEmailID = $_POST['AdminEmailID'];
+		
+		$DBName = $_POST['DBName']; 
+		$DBUser = $_POST['DBUser']; 
+		$DBPassword = cm_encrypt($_POST['DBPassword']); 
+		
 		
 		$doUpdate = true;
 		$pass_hash = '';
@@ -95,6 +102,7 @@ include('template/admin-header.php');
 		}
 		
 		
+			
 		
 		if($doUpdate){
 				$query  = "UPDATE `Client` SET 
@@ -107,6 +115,11 @@ include('template/admin-header.php');
 				 .",`Client`.MaxUser = '$MaxUser'" 
 				 .",`Client`.MaxGB = '$MaxGB'" 
 				 .",`Client`.PackageID = '$ClientPackageID'" 
+				 .",`Client`.NoreplyEmailID = '$NoreplyEmailID'" 
+				.",`Client`.AdminEmailID = '$AdminEmailID'" 
+				.",`Client`.DBName = '$DBName'" 
+				.",`Client`.DBUser = '$DBUser'" 
+				.",`Client`.DBPassword = '$DBPassword'" 
 			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientCode = '$ClientCode'";
@@ -164,10 +177,12 @@ include('template/admin-header.php');
    
    
    //get client info
-   $query  = "SELECT `Client`.*,`Package`.PackageName
-			FROM `Client`,`Package`
+   $query  = "SELECT `Client`.*,`Package`.PackageName, `AdEmail`.Email AS `AdminEmail`, `NoRpEmail`.Email AS `NoreplyEmail` 
+			FROM `Client`,`Package`,`Email` AdEmail,  `Email` NoRpEmail
 			WHERE  `Client`.ClientCode = '$ClientCode'  AND `Client`.`RemovalFlag` = 0 
-			AND `Package`.`PackageID` =  `Client`.`PackageID`";
+			AND `Package`.`PackageID` =  `Client`.`PackageID`
+			AND `AdEmail`.`EmailID` =  `Client`.`AdminEmailID` 
+			AND `NoRpEmail`.`EmailID` =  `Client`.`NoreplyEmailID` ";
 	
 	$result = mysqli_query($db, $query);
 	//$data   = array();        
@@ -204,6 +219,13 @@ include('template/admin-header.php');
 		$DBName = $row['DBName']; 
 		$DBUser = $row['DBUser']; 
 		$DBPassword = cm_decrypt($row['DBPassword']); 
+		
+		$AdminEmailID = $row['AdminEmailID']; 
+		$AdminEmail= $row['AdminEmail']; 
+		
+		$NoreplyEmailID = $row['NoreplyEmailID']; 
+		$NoreplyEmail = $row['NoreplyEmail']; 
+		
 	}
 	
 	if(!$found_client){
@@ -264,6 +286,21 @@ include('template/admin-header.php');
 	while ($row = mysqli_fetch_array($result)) {
 		array_push($package_data,$row);
 	}
+	
+	
+	//get email list 
+	$query  = "SELECT `Email`.*
+			FROM `Email`
+			WHERE   `Email`.RemovalFlag = 0";
+	
+	//echo $query;
+	
+	$result = mysqli_query($db, $query);
+	$email_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($email_data,$row);
+	}
+	
 	
 	cm_close_connect($db);
 	
@@ -443,7 +480,7 @@ include('template/admin-header.php');
 					</div>
 					
 					<div class="form-group">
-						<label for="updatedate" class="col-sm-4 control-label">Gói Hiện Tại:</label>
+						<label for="ClientPackageID" class="col-sm-4 control-label">Gói Hiện Tại:</label>
 						<div class="col-sm-8">
 							
 							<select class="form-control" name="ClientPackageID" id="ClientPackageID">
@@ -489,7 +526,7 @@ include('template/admin-header.php');
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="email" class="col-sm-4 control-label">Email</label>
+						<label for="email" class="col-sm-4 control-label">Email Liên Hệ:</label>
 						<div class="col-sm-8">
 							<input type="email" class="form-control" id="ContactEmail" name="ContactEmail" placeholder="example@domain.com" value="<?php echo htmlspecialchars($ContactEmail); ?>">
 							
@@ -526,7 +563,74 @@ include('template/admin-header.php');
 					</div>
 					
 					
+					<div class="form-group">
+						<label for="ClientPackageID" class="col-sm-4 control-label">Root Email:</label>
+						<div class="col-sm-8">
+							
+							<select class="form-control" name="AdminEmailID" id="AdminEmailID">
+							<option value="<?php echo $AdminEmailID; ?>"> <?php echo $AdminEmail; ?> </option>
+
+<?php
+							for($i=0;$i<sizeof($email_data);$i++){
+								$email_item = $email_data[$i];
+								if($email_item['EmailType'] == 1){
+									echo "<option value='". $email_item['EmailID']  ."'>". $email_item['Email']."</option>";	
+								}
+							}				
+?>
+							</select>
+							
+							
+						</div>
+					</div>
 					
+
+					<div class="form-group">
+						<label for="ClientPackageID" class="col-sm-4 control-label">Sender Email:</label>
+						<div class="col-sm-8">
+							
+							<select class="form-control" name="NoreplyEmailID" id="NoreplyEmailID">
+							<option value="<?php echo $NoreplyEmailID; ?>"> <?php echo $NoreplyEmail; ?> </option>
+
+<?php
+							for($i=0;$i<sizeof($email_data);$i++){
+								$email_item = $email_data[$i];
+								if($email_item['EmailType'] == 2){
+									echo "<option value='". $email_item['EmailID']  ."'>". $email_item['Email']."</option>";	
+								}
+							}				
+?>
+							</select>
+							
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="DBName" class="col-sm-4 control-label">DB Name:</label>
+						<div class="col-sm-8">
+							<input  class="form-control" id="DBName" name="DBName" placeholder="" value="<?php echo htmlspecialchars($DBName); ?>">
+							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="DBUser" class="col-sm-4 control-label">DB User:</label>
+						<div class="col-sm-8">
+							<input  class="form-control" id="DBUser" name="DBUser" placeholder="" value="<?php echo $DBUser; ?>">
+							
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label for="DBPassword" class="col-sm-4 control-label">DB Password:</label>
+						<div class="col-sm-8">
+							<input  class="form-control" id="DBPassword" name="DBPassword" placeholder="" value="<?php echo $DBPassword; ?>">
+							
+						</div>
+					</div>
+
 					<div class="form-group">
 						<div class="col-sm-12 col-sm-offset-5">
 							<input id="submit" name="submit" type="submit" value="Thay Đổi" class="btn btn-primary">
