@@ -118,12 +118,12 @@
 		 if(!$mail->Send())
 		{
 			//echo "Mailer Error: " . $mail->ErrorInfo;
-			$return_data =  '{"code":111, "message":"Mailer Error"}';
+			$return_data =  '{"status":404, "message":"Mailer Error"}';
 		}
 		else
 		{
 			//echo "Message has been sent";
-			$return_data =  '{"code":200, "message": "Message has been sent"}';
+			$return_data =  '{"status":200, "message": "Message has been sent"}';
 		}
 
 		return $return_data;

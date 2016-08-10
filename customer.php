@@ -626,8 +626,8 @@ include('template/footer.php');
 		}
 		
 		
-		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request"; 
-		var post_uri  = "<?php echo cm_get_full_api_url("www", "client.send_upgrade_request");?>"; 
+		var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request"; 
+		//var post_uri  = "<?php echo cm_get_full_api_url("www", "client.send_upgrade_request");?>"; 
 		$("#md_waiting").modal({backdrop: 'static', keyboard: false});
 		$.post(post_uri,
 			{
@@ -636,16 +636,33 @@ include('template/footer.php');
 			},
 			
 			function(data, status){
-				
 				$("#md_waiting").modal("toggle");
+				alert("Data: " + data + "\nStatus: " + status);
 				
-				//alert("Data: " + data + "\nStatus: " + status);
-				$("#md_warning_body_text").text(data);
-				$("#md_warning_body_text").removeClass("alert-warning");
-				$("#md_warning_body_text").addClass("alert-success");
-				$("#md_warning").modal({backdrop: 'static', keyboard: false});
+				//var obj = data;
+				//var objJson = $.parseJSON(data);
+				//alert(objJson);
+				var statusCode = data['status']; 
+				alert(statusCode);
+				/*
+				if(statusCode==200){
+					$("#md_warning_body_text").text(message);
+					$("#md_warning_body_text").removeClass("alert-warning");
+					$("#md_warning_body_text").addClass("alert-success");
+					$("#md_warning").modal({backdrop: 'static', keyboard: false});
+					
+				}
+				else{
+					var message  = obj['message']; 
+					$("#md_warning_body_text").text(message);
+					//$("#md_warning_body_text").removeClass("alert-warning");
+					//$("#md_warning_body_text").addClass("alert-success");
+					$("#md_warning").modal({backdrop: 'static', keyboard: false});
+				}
+				*/
 				
-			});
+				
+			}).responseJSON;
 			
 			$("#basicModal").modal("toggle");
 			

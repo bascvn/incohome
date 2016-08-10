@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 //==============================================================================================================
 // this header's code must be embeded in every AJAX controler file
 //==============================================================================================================
@@ -214,6 +214,18 @@ function add_transaction(){
 //======================================================================================
 function send_upgrade_request(){
 	
+	$ClientCode = $_POST['ClientCode'];
+	$RequestContent = $_POST['RequestContent'];
+	
+	$from = FROM_EMAIL; 
+	$to = SUPPORT_EMAIL; 
+	$subject = $ClientCode . ' request - from INCO';
+	$body =$RequestContent;
+	
+	$toArr = array($to);
+	//$return_data = cm_send_mail($toArr,$subject,$body);
+	//echo $return_data;
+	echo '{"status":200,"message":"ok"}';	
 }
 
 ?>

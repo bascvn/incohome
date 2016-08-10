@@ -154,15 +154,13 @@ $TrantractionDate =  $dt->format('d/m/Y');
 				else{
 					var message  = obj['message']; 
 					$("#md_warning_body_text").text(message);
-					$("#md_warning_body_text").removeClass("alert-warning");
-					$("#md_warning_body_text").addClass("alert-success");
+					//$("#md_warning_body_text").removeClass("alert-warning");
+					//$("#md_warning_body_text").addClass("alert-success");
 					$("#md_warning").modal({backdrop: 'static', keyboard: false});
 
 				}
 				
-				/*
 				//alert("Data: " + data + "\nStatus: " + status);
-				*/
 			}
 		);
 		
