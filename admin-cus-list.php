@@ -13,9 +13,10 @@ include('template/admin-header.php');
    $db     = cm_connect();
    
    //get client info
-   $query  = "SELECT `Client`.*,`Package`.PackageName
-			FROM `Client`,`Package`
-			WHERE `Client`.`RemovalFlag` = 0  AND `Package`.`PackageID` =  `Client`.`PackageID`";
+   $query  = "SELECT `Client`.*,`Package`.PackageName, `AdEmail`.Email AS AdminEmail 
+			FROM `Client`,`Package`,`Email` AS `AdEmail`
+			WHERE `Client`.`RemovalFlag` = 0  AND `Package`.`PackageID` =  `Client`.`PackageID`
+			AND `AdEmail`.`EmailID` =  `Client`.`AdminEmailID`";
 	
 	$result = mysqli_query($db, $query);
 	
@@ -56,15 +57,17 @@ top_menu.style.color = "White";
 
 		
 		<div class="row">
-  			<div class="col-md-6 col-md-offset-3">
+  			<div class="col-md-12 col-md-offset-0">
   				<h2 class="page-header text-center">Danh Sách Khách Hàng</h2>
 				
-				<table class="col-md-6 col-md-offset-0" border="1" style="width:100%;">
+				<table class="col-md-12 col-md-offset-0" border="1" style="width:100%;">
 					<tr>
-					<th>STT</th>
+					<th>ID</th>
 					<th>Mã Công Ty</th>
 					<th >Tên Công Ty</th>
 					<th >Tình Trạng</th>
+					<th >Contact Email</th>
+					<th >Admin Email</th>
 					<th >Detail</th>
 					</tr>
 					
@@ -73,13 +76,16 @@ top_menu.style.color = "White";
 						
 						
 						echo "<tr>
-								<td>".($i+1)."</td>
+								<td>".$row['ClientID']."</td>
 								<td>".$row['ClientCode']."</td>
 								<td>".$row['ClientName']."</td>
 								
 								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
 								.($row['Status']==0 ?"red": (($row['Status']==1) ? "green":"yellow"))
 								."; width: 20px; text-align: center;'>". $row['Status']."</div></td>
+								
+								<td>".$row['ContactEmail']."</td>
+								<td>".$row['AdminEmail']."</td>
 								
 								<td><a href='admin-customer.php?clientcode=". $row['ClientCode'] ."'>View / Edit<a></td>
 							</tr>";
@@ -93,7 +99,7 @@ top_menu.style.color = "White";
 		</div>
 		<br/>
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
+			<div class="col-md-4 col-md-offset-4">
 					<p><button class = "btn btn-lg btn-primary btn-block"   name = "add_new-client">Add New Client</button></p>
 			</div>
 		</div>
