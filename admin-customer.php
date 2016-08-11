@@ -349,8 +349,6 @@ include('template/admin-header.php');
 //top_menu.style.color = "White";
 </script>
 
-		<h1><a href="admin-cus-list.php" class="glyphicon glyphicon-backward"></a></h1>
-		
 		<h1 class="page-header text-center"><?php echo "<p>$ClientName</p>";?>
 		</h1>	
 

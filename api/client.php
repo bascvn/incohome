@@ -272,28 +272,41 @@ function upgrade(){
 		
 		if($add_transaction)
 		{
-			
+			$ClientPackageID  = 0;
 			
 			if($up_package>0){
 				$ClientPackageID = $up_package;
-				$TrantractionDescription = "Buy ".$ClientPackageID;
 				
 			}else if($add_gb >0){
 				$ClientPackageID = 5; 
-				//$TrantractionDescription .= ":  ".$add_gb;
-				$TrantractionDescription = "Buy ".$ClientPackageID . ":  ".$add_gb;
 			}
 			
-			$TrantractionDate =  time();
-			$TrantractionSubtotal = 1000;
-			
-			
-			
-			$db     = cm_connect();
-			$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
-			VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
-			$result = mysqli_query($db, $query);
-			
+			if($ClientPackageID >0){
+				
+				$query  = "SELECT * FROM `Package` WHERE PackageID = '$ClientPackageID'";
+				$result = mysqli_query($db, $query);
+				
+				$TrantractionSubtotal = 0;
+				$TrantractionDate =  time();
+				$PackageName = '';
+				
+				while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
+					$TrantractionSubtotal = $row['PackagePrice'];
+					$PackageName = $row['PackageName'];
+					break;
+				}
+				
+				$TrantractionDescription = "Buy ".$PackageName;
+					
+				if($add_gb >0){
+					$TrantractionDescription .=  ":  ".$add_gb;
+				}
+				
+				
+				$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
+				VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
+				$result = mysqli_query($db, $query);
+			}
 		}
 		
 		
