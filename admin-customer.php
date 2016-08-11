@@ -40,6 +40,7 @@ include('template/admin-header.php');
    $result_msg = '';
    $tz_name = "Asia/Ho_Chi_Minh";
    $tz = new DateTimeZone($tz_name);
+   $Status = 1;
   
    $db     = cm_connect();
    
@@ -76,6 +77,7 @@ include('template/admin-header.php');
 		$DBPassword = cm_encrypt($_POST['DBPassword']); 
 		
 		$Description = $_POST['Description']; 
+		$Status = $_POST['Status']; 
 		
 		$doUpdate = true;
 		$pass_hash = '';
@@ -122,6 +124,7 @@ include('template/admin-header.php');
 				.",`Client`.DBUser = '$DBUser'" 
 				.",`Client`.DBPassword = '$DBPassword'" 
 				.",`Client`.Description = '$Description'" 
+				.",`Client`.Status = '$Status'" 
 			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientCode = '$ClientCode'";
@@ -232,7 +235,9 @@ include('template/admin-header.php');
 		$NoreplyEmailID = $row['NoreplyEmailID']; 
 		$NoreplyEmail = $row['NoreplyEmail']; 
 		
-		$Description = $row['Description']; 		
+		$Description = $row['Description']; 
+		$Status = $row['Status']; 
+				
 	}
 	
 	if(!$found_client){
@@ -635,6 +640,14 @@ include('template/admin-header.php');
 						<div class="col-sm-8">
 							<input  class="form-control" id="DBPassword" name="DBPassword" placeholder="" value="<?php echo $DBPassword; ?>">
 							
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="updatedate" class="col-sm-4 control-label">Status:</label>
+						<div class="col-sm-8">
+							
+							<input type="number" min="0" class="form-control" id="Status" name="Status" placeholder="0" value="<?php echo $Status; ?>">
 						</div>
 					</div>
 					
