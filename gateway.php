@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 // Require the initialisation file
 require_once 'common.php';

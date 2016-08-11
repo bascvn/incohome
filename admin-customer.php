@@ -759,7 +759,7 @@ include('template/admin-footer.php');
 
 <?php
 // do php stuff
-include('admin/form-add-transaction.php');
+include('template/form-admin-add-transaction.php');
 ?>
 
 <?php

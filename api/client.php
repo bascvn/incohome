@@ -214,6 +214,7 @@ function add_transaction(){
 //======================================================================================
 function send_upgrade_request(){
 	
+	
 	$ClientCode = $_POST['ClientCode'];
 	$RequestContent = $_POST['RequestContent'];
 	
@@ -223,9 +224,9 @@ function send_upgrade_request(){
 	$body =$RequestContent;
 	
 	$toArr = array($to);
-	//$return_data = cm_send_mail($toArr,$subject,$body);
-	//echo $return_data;
-	echo '{"status":200,"message":"ok"}';	
+	$return_data = cm_send_mail($toArr,$subject,$body);
+	echo $return_data;
+	
 }
 
 ?>
