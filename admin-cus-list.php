@@ -69,17 +69,18 @@ top_menu.style.color = "White";
 					<th >Contact Email</th>
 					<th >Admin Email</th>
 					<th >Detail</th>
+					
 					</tr>
 					
 					<?php for($i=0;$i<sizeof($client_data);$i++){
 						$row = $client_data[$i];
 						
 						
-						echo "<tr>
-								<td>".$row['ClientID']."</td>
-								<td>".$row['ClientCode']."</td>
+						echo "<tr><form  role='form' method='POST' action='admin-customer.php'>
+				
+								<td><input class='form-control' id='ClientCode' name='ClientID' value='".$row['ClientID']."'   readonly='readonly' ></td>
+								<td><input class='form-control' id='ClientCode' name='ClientCode' value='".$row['ClientCode']."'   readonly='readonly' ></td>
 								<td>".$row['ClientName']."</td>
-								
 								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
 								.($row['Status']==0 ?"red": (($row['Status']==1) ? "green":"yellow"))
 								."; width: 20px; text-align: center;'>". $row['Status']."</div></td>
@@ -87,8 +88,10 @@ top_menu.style.color = "White";
 								<td>".$row['ContactEmail']."</td>
 								<td>".$row['AdminEmail']."</td>
 								
-								<td><a href='admin-customer.php?clientcode=". $row['ClientCode'] ."'>View / Edit<a></td>
-							</tr>";
+								<td> 
+									<button type='submit'  name='view_customer' class='btn btn-success'>View/Edit</button>
+								</td>
+							</form></tr>";
 						
 					} ?>
 					

@@ -10,18 +10,19 @@ include('template/admin-header.php');
 		die();
    }
    
-   //$ContactEmail = $_SESSION['username'];
-   
-   $ClientCode = '';
-   if(isset($_GET['clientcode'])){
-		$ClientCode = $_GET['clientcode'];
-	}else if(isset($_POST['ClientCode'])){
-		$ClientCode = $_POST['ClientCode'];
+   if(isset($_POST['ClientID'])){
+		$ClientID = $_POST['ClientID'];
 	}
 	else{
 		header("Location: admin-cus-list.php");
 		die();
 	}
+	
+	if(isset($_POST['ClientCode'])){
+		$ClientCode = $_POST['ClientCode'];
+	}
+	
+	
 
    $ClientName ='';
    $ContactPhone = '';
@@ -33,7 +34,6 @@ include('template/admin-header.php');
    $MaxUser = 0;
    $PackageID = 0;
    $PackageName = '';
-   $ClientID = 0;
    $DBName = '';
    $DBUser = '';
    $DBPassword = '';
@@ -47,6 +47,7 @@ include('template/admin-header.php');
    
    //change values
    if (isset($_POST["submit"])) {
+		
 		
 		$ClientName = $_POST['ClientName'];
 		$ContactPhone = $_POST['ContactPhone'];
@@ -110,6 +111,7 @@ include('template/admin-header.php');
 		if($doUpdate){
 				$query  = "UPDATE `Client` SET 
 				 `Client`.ClientName = '$ClientName' 
+				 ,`Client`.ClientCode = '$ClientCode' 
 				 ,`Client`.ContactEmail = '$ContactEmail' 
 				 ,`Client`.ContactPhone = '$ContactPhone' 
 				 ,`Client`.DateCreated = ".$DateCreatedObj->getTimestamp()
@@ -127,7 +129,7 @@ include('template/admin-header.php');
 				.",`Client`.Status = '$Status'" 
 			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
-				 ." WHERE `Client`.ClientCode = '$ClientCode'";
+				 ." WHERE `Client`.ClientID = '$ClientID'";
 				 
 			
 				 $result = mysqli_query($db, $query);
@@ -192,6 +194,8 @@ include('template/admin-header.php');
 			AND `Package`.`PackageID` =  `Client`.`PackageID`
 			AND `AdEmail`.`EmailID` =  `Client`.`AdminEmailID` 
 			AND `NoRpEmail`.`EmailID` =  `Client`.`NoreplyEmailID` ";
+	
+	//echo $query;
 	
 	$result = mysqli_query($db, $query);
 	//$data   = array();        
@@ -452,7 +456,7 @@ include('template/admin-header.php');
 					<div class="form-group">
 						<label for="createdate" class="col-sm-4 control-label">Mã Công Ty:</label>
 						<div class="col-sm-8">
-							<input class="form-control" id="ClientCode" name="ClientCode" value="<?php echo $ClientCode; ?>"  readonly="readonly" >
+							<input class="form-control" id="ClientCode" name="ClientCode" value="<?php echo $ClientCode; ?>" >
 						</div>
 					</div>
 					
