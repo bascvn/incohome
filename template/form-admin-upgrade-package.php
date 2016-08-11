@@ -1,5 +1,18 @@
-﻿<!--  transaction dialog -->
-<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-labelledby="transactionModal" aria-hidden="true">
+﻿<?php
+
+$tz_name = "Asia/Ho_Chi_Minh";
+$tz = new DateTimeZone($tz_name);
+   
+$dt = new DateTime();
+$dt->setTimezone($tz);
+$TrantractionDate =  $dt->format('d/m/Y');
+		
+?>
+
+
+
+<!--  transaction dialog -->
+<div class="modal fade" id="upgradePackageModal" tabindex="-1" role="dialog" aria-labelledby="upgradePackageModal" aria-hidden="true">
     <div class="modal-dialog my-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -16,27 +29,30 @@
 						</div>
 					</div>
 					
-					
+
+
 					<div class="form-group">
 						<label for="name" class="col-sm-5 control-label">Chọn gói cao hơn</label>
 						<div class="col-sm-7">
-							
+					
 							<select class="form-control" name="sel_up_package" id="sel_up_package">
-							<option value="0"></option>
+							<option value="0">--</option>
 
 <?php
-							for($i=0;$i<sizeof($package_data);$i++){
-								$package = $package_data[$i];
-								
+							for($j=0;$j<sizeof($package_data);$j++){
+								$package = $package_data[$j];
 								if($package['PackageID'] >$PackageID && $package['AdditionalType'] == 0){
-									echo "<option value='". $package['PackageID']  ."'>". $package['PackageName']. " - Giá: ". number_format($package['PackagePrice'],0,',','.')  ."(VND) / Tháng</option>";	
+									echo "<option value='". $package['PackageID']  ."'   data-price='". $package['PackagePrice']  ."'  data-name='". $package['PackageName']  ."' >". $package['PackageName']."</option>";	
 								}
+								
 							}				
 ?>
 							</select>
-	  
 						</div>
-					</div>
+					</div>		
+					
+
+					
 					
 					<div class="form-group">
 						<label for="name" class="col-sm-5 control-label">Mua thêm bộ nhớ (GB)</label>
@@ -57,18 +73,41 @@
 					
 
 					<div class="form-group">
-						<label for="name" class="col-sm-5 control-label">Yêu cầu khác</label>
+						<label for="name" class="col-sm-5 control-label">Từ Ngày</label>
 						<div class="col-sm-7">
-								<textarea class="form-control" rows="4" name="txt_request_other" id="txt_request_other"></textarea>
+							<input  class="form-control DatePicker" type="text" data-role="date" id="upgradeFromDate" name="upgradeFromDate" 
+							readonly="readonly" data-inline="true" style="background-color : #ffffff;"
+								value="<?php echo $TrantractionDate; ?>">
+								
 						</div>
 					</div>
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Đến Ngày</label>
+						<div class="col-sm-7">
+							<input  class="form-control DatePicker" type="text" data-role="date" id="upgradeToDate" name="upgradeToDate" 
+							readonly="readonly" data-inline="true" style="background-color : #ffffff;"
+								value="<?php echo $DateExpired; ?>">
+								
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-5 control-label">Tạo Giao Dịch</label>
+						
+						<div class="col-sm-1" style="border: 0; box-shadow: none;">
+						  <input type="checkbox"  class="form-control" style="border: 0; box-shadow: none;" value="" id="cb_add_transaction" name="cb_add_transaction">
+						</div>
+					</div>
+					
+					
 				</form>		
 					
 				
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                <button type="button" id="bt_send_up_request"  class="btn btn-primary">Gởi chúng tôi</button>
+                <button type="button" id="bt_save_upgrade"  class="btn btn-primary">Lưu Lại</button>
         </div>
     </div>
   </div>
@@ -95,17 +134,16 @@
 		};
 	});
 	
-	$("#bt_send_up_request").click(function() {
+	$("#bt_save_upgrade").click(function() {
 		
 		
-		var up_package = $('#sel_up_package').val();
+		var up_package =  $('#sel_up_package').val();
 		var add_gb =  $("#txt_add_gb").val();
-		var txt_request_other = $('#txt_request_other').val();
 		var cb_host_own_server = $("#cb_host_own_server").prop('checked');
 		
-		if(up_package==0 && add_gb==0 && txt_request_other.length ==0 && !cb_host_own_server){
+		if(up_package==0 && add_gb==0 && !cb_host_own_server){
 			 	
-			$("#md_warning_body_text").text("Vui lòng mô tả yêu cầu nâng cấp.");
+			$("#md_warning_body_text").text("Chọn một hình thức nâng cấp.");
 			$("#md_warning_body_text").removeClass("alert-success");
 			$("#md_warning_body_text").addClass("alert-warning");
 			
@@ -114,52 +152,80 @@
 			return;
 		}
 		
-		var ClientCode = '<?php echo $ClientCode;?>';
-		var send_content = "ClientCode "+ClientCode +" yêu cầu: \n";
-		if(up_package>0){
-			send_content += "Nâng cấp gói: "+ $('#sel_up_package option:selected').text() + "\n";
+		
+		var upgradeFromDate = convertDateStringToSenconds($("#upgradeFromDate").val());
+		var upgradeToDate = convertDateStringToSenconds($("#upgradeToDate").val());
+		var currentDate = new Date().getTime() / 1000;
+		
+
+		if(upgradeFromDate < (currentDate - 24*60*60)  || upgradeToDate < (currentDate - 24*60*60)
+			 || upgradeToDate < upgradeFromDate)
+		{
+			$("#md_warning_body_text").text("Thời gian thiết lập không đúng.");
+			$("#md_warning_body_text").removeClass("alert-success");
+			$("#md_warning_body_text").addClass("alert-warning");
+			
+			$("#md_warning").modal({backdrop: 'static', keyboard: false});
+			
+			return;
 		}
 		
-		if(add_gb>0){
-			send_content += "Mua thêm GB: " + add_gb +"\n";
-		}
-		
-		if(cb_host_own_server){
-			send_content += "đặt trên server riêng \n";
-		}
-		
-		if(txt_request_other.length >0){
-			send_content += "Yêu cầu khác: " + txt_request_other +"\n";
-		}
+		var ClientID = '<?php echo $ClientID;?>';
+		var cb_add_transaction = $("#cb_add_transaction").prop('checked'); 
 		
 		
-		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request"; 
-		var post_uri  = "<?php echo cm_get_full_api_url("www", "client.send_upgrade_request");?>"; 
+		
+
+		//var post_uri  = "<?php echo cm_get_full_api_url("www", "client.add_transaction");?>"; 
+		var post_uri  = "http://localhost/inco/gateway.php?controller=client.upgrade";
+		
 		$("#md_waiting").modal({backdrop: 'static', keyboard: false});
 		$.post(post_uri,
 			{
-				ClientCode: ClientCode,
-				RequestContent: send_content
+				ClientID: ClientID,
+				up_package: up_package,
+				add_gb: add_gb,
+				host_own_server: cb_host_own_server,
+				upgradeFromDate: upgradeFromDate,
+				upgradeToDate: upgradeToDate,
+				add_transaction: cb_add_transaction
+				
 			},
 			
 			function(data, status){
 				
 				$("#md_waiting").modal("toggle");
 				
-				//alert("Data: " + data + "\nStatus: " + status);
-				$("#md_warning_body_text").text(data);
-				$("#md_warning_body_text").removeClass("alert-warning");
-				$("#md_warning_body_text").addClass("alert-success");
-				$("#md_warning").modal({backdrop: 'static', keyboard: false});
 				
-			});
+				var pos  = data.search("{"); //for remove prefix UTF8 code
+				data = data.substr(pos);
+				
+				var obj = $.parseJSON(data);
+				var statusCode = obj['status']; 
+				
+				if(statusCode==200){
+					location.reload();
+				}
+				else{
+					var message  = obj['message']; 
+					$("#md_warning_body_text").text(message);
+					//$("#md_warning_body_text").removeClass("alert-warning");
+					//$("#md_warning_body_text").addClass("alert-success");
+					$("#md_warning").modal({backdrop: 'static', keyboard: false});
+
+				}
+				
+				//alert("Data: " + data + "\nStatus: " + status);
+			}
+		);
+		
 			
-			$("#transactionModal").modal("toggle");
+		$("#upgradePackageModal").modal("toggle");
 			
 	});
 	
 	
-	$('#transactionModal').on('hidden', function () {
+	$('#upgradePackageModal').on('hidden', function () {
 		// do something…
 		$("#cb_host_own_server").prop('checked', false);
 		$("#txt_add_gb").removeAttr("disabled"); 
@@ -170,7 +236,7 @@
 	});
 
 
-	$('#transactionModal').on('hidden.bs.modal', function () {
+	$('#upgradePackageModal').on('hidden.bs.modal', function () {
 	  // do something…
 	  	$("#cb_host_own_server").prop('checked', false);
 		$("#txt_add_gb").removeAttr("disabled"); 

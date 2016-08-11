@@ -1,4 +1,19 @@
-﻿
+﻿<Script>
+	function numberWithCommas(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+	
+	function convertDateStringToSenconds(sDate) {
+		var dateArr = sDate.split("/"); // dd/mm/yyyy
+		var d  = new Date(dateArr[2], dateArr[1] - 1, dateArr[0]);
+		var ms = d.valueOf();
+		var seconds = ms / 1000;
+		return seconds;
+	}
+
+	
+</Script>
+
 <div class="modal fade" id="md_warning" tabindex="-1" role="dialog" aria-labelledby="md_warning" aria-hidden="true">
     <div class="modal-dialog my-warn-modal">
         <div class="modal-content">

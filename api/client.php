@@ -229,4 +229,82 @@ function send_upgrade_request(){
 	
 }
 
+//======================================================================================
+function upgrade(){
+	
+	try{
+		
+		$ClientID = $_POST['ClientID'];
+		$up_package = $_POST['up_package'];
+		$add_gb = $_POST['add_gb'];
+		$host_own_server = strcmp($_POST['host_own_server'],'true')==0;
+		$upgradeFromDate = $_POST['upgradeFromDate'];
+		$upgradeToDate = $_POST['upgradeToDate'];
+		$add_transaction = strcmp($_POST['add_transaction'],'true')==0;
+					
+		
+		if($host_own_server){
+			$up_package = 6;
+		}
+	
+		$db     = cm_connect();
+		$query  = "UPDATE `Client`  SET MaxGB = MaxGB + $add_gb,
+			DateUpdated = $upgradeFromDate,
+			DateExpired = $upgradeToDate ";
+			
+		if($up_package>0){
+			$query  .= ", PackageID = $up_package ";
+		}	
+		
+		$query  .= " WHERE ClientID = $ClientID ";
+		
+		$result = mysqli_query($db, $query);
+		
+		
+		
+			
+		if($result){
+			echo '{"status":200,"message":"ok"}';
+		}
+		else{
+			echo '{"status":404,"message":"Could not insert data"}';
+		}
+		
+		if($add_transaction)
+		{
+			
+			
+			if($up_package>0){
+				$ClientPackageID = $up_package;
+				$TrantractionDescription = "Buy ".$ClientPackageID;
+				
+			}else if($add_gb >0){
+				$ClientPackageID = 5; 
+				//$TrantractionDescription .= ":  ".$add_gb;
+				$TrantractionDescription = "Buy ".$ClientPackageID . ":  ".$add_gb;
+			}
+			
+			$TrantractionDate =  time();
+			$TrantractionSubtotal = 1000;
+			
+			
+			
+			$db     = cm_connect();
+			$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
+			VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
+			$result = mysqli_query($db, $query);
+			
+		}
+		
+		
+		mysqli_close($db);
+	}
+	catch(Exception $e){
+		//echo $e;
+		echo '{"status":500,"message":"System Error"}';
+	}
+	
+}
+
+
 ?>

@@ -75,6 +75,7 @@ include('template/admin-header.php');
 		$DBUser = $_POST['DBUser']; 
 		$DBPassword = cm_encrypt($_POST['DBPassword']); 
 		
+		$Description = $_POST['Description']; 
 		
 		$doUpdate = true;
 		$pass_hash = '';
@@ -120,6 +121,7 @@ include('template/admin-header.php');
 				.",`Client`.DBName = '$DBName'" 
 				.",`Client`.DBUser = '$DBUser'" 
 				.",`Client`.DBPassword = '$DBPassword'" 
+				.",`Client`.Description = '$Description'" 
 			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientCode = '$ClientCode'";
@@ -230,6 +232,7 @@ include('template/admin-header.php');
 		$NoreplyEmailID = $row['NoreplyEmailID']; 
 		$NoreplyEmail = $row['NoreplyEmail']; 
 		
+		$Description = $row['Description']; 		
 	}
 	
 	if(!$found_client){
@@ -250,8 +253,8 @@ include('template/admin-header.php');
 	
 	
 	$DateCurrent=time();
-	$DateUsed =   floor(($DateCurrent - $DateUpdated_Col) / (24*60*60));
-	$DateTotal = ceil(($DateExpired_Col - $DateUpdated_Col) / (24*60*60));
+	$DateUsed =   floor(($DateCurrent - $DateCreated_Col) / (24*60*60));
+	$DateTotal = ceil(($DateExpired_Col - $DateCreated_Col) / (24*60*60));
 	
 	
 	//get used memory
@@ -424,7 +427,7 @@ include('template/admin-header.php');
 						<div class="col-sm-12 col-sm-offset-5">
 							<a href="#" class="btn btn-primary" 
 								data-toggle="modal" 
-								data-target="#basicModal"
+								data-target="#upgradePackageModal"
 								data-backdrop="static" data-keyboard="false">Nâng Cấp</a>
 						</div>
 					</div>
@@ -634,6 +637,15 @@ include('template/admin-header.php');
 							
 						</div>
 					</div>
+					
+					
+					<div class="form-group">
+						<label for="name" class="col-sm-4 control-label">Note:</label>
+						<div class="col-sm-8">
+								<textarea class="form-control" rows="4" name="Description" id="Description"><?php echo htmlspecialchars($Description); ?></textarea>
+						</div>
+					</div>
+					
 
 					<div class="form-group">
 						<div class="col-sm-12 col-sm-offset-5">
@@ -676,13 +688,13 @@ include('template/admin-header.php');
 						$DiscountTax =  $row['DiscountTax'];
 						$TotalPay = $Subtotal + $Tax  - $Discount - $DiscountTax;
 						
-						$PackageID =  $row['PackageID'];
-						$PackageName =  '';
+						$rPackageID =  $row['PackageID'];
+						$rPackageName =  '';
 						if($PackageID>0){
 							for($j=0;$j<sizeof($package_data);$j++){
 								$package = $package_data[$j];
-								if($package['PackageID']==$PackageID)
-									$PackageName = $package['PackageName'];
+								if($package['PackageID']==$rPackageID)
+									$rPackageName = $package['PackageName'];
 							}
 					
 						}
@@ -704,7 +716,7 @@ include('template/admin-header.php');
 								
 								<td>
 									<select class="form-control" name="ClientPackageID" id="ClientPackageID">
-									<option value="<?php echo $PackageID; ?>"> <?php echo $PackageName; ?> </option>
+									<option value="<?php echo $rPackageID; ?>"> <?php echo $rPackageName; ?> </option>
 
 <?php
 									for($j=0;$j<sizeof($package_data);$j++){
@@ -761,6 +773,12 @@ include('template/admin-footer.php');
 // do php stuff
 include('template/form-admin-add-transaction.php');
 ?>
+
+<?php
+// do php stuff
+include('template/form-admin-upgrade-package.php');
+?>
+
 
 <?php
 // do php stuff

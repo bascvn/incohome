@@ -153,7 +153,7 @@ tr:nth-child(even) {
 .my-modal-body {
     overflow-y: hidden;
     height: 100%;
-    max-height:320px;
+    max-height:380px;
  }
  
  

@@ -84,10 +84,7 @@ $TrantractionDate =  $dt->format('d/m/Y');
 <!--  package upgrade dialog -->
 <Script>
 	
-	function numberWithCommas(x) {
-		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-	}
-
+	
 	$('#NewClientPackageID').on('change', function() {
 		var selected = $(this).find('option:selected');
 		var pName = selected.data('name');
@@ -104,15 +101,16 @@ $TrantractionDate =  $dt->format('d/m/Y');
 	
 	$("#bt_add_transaction").click(function() {
 		
+		/*
 		var dateArr = $("#TrantractionDate").val().split("/"); // dd/mm/yyyy
 		var d  = new Date(dateArr[2], dateArr[1] - 1, dateArr[0]);
 		var ms = d.valueOf();
 		var TrantractionDate = ms / 1000;
+		*/
+		var TrantractionDate = convertDateStringToSenconds($("#TrantractionDate").val());
 		var NewClientPackageID =  $("#NewClientPackageID").val();
-		
-		
 		var TrantractionSubtotal =  $("#TrantractionSubtotal").val();
-		var TrantractionSubtotal = TrantractionSubtotal.replace(".", "");
+		var TrantractionSubtotal = TrantractionSubtotal.replace(/\./g , "");
 		
 		var TrantractionDescription = $('#TrantractionDescription').val();
 		if(TrantractionDescription.length ==0 ){
