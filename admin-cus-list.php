@@ -27,22 +27,18 @@ include('template/admin-header.php');
 	}
 	
 	
-	/*
-	if($secondFromGMT!=0){
-		$tz = timezone_name_from_abbr('', $secondFromGMT, 1);
-		// Workaround for bug #44780
-		if($tz === false) $tz = timezone_name_from_abbr('', $secondFromGMT, 0);
-		// Set timezone
-		date_default_timezone_set($tz);
+	//get package 
+	$query  = "SELECT `Package`.*
+			FROM `Package`
+			WHERE   `Package`.RemovalFlag = 0";
+	
+	//echo $query;
+	
+	$result = mysqli_query($db, $query);
+	$package_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($package_data,$row);
 	}
-	else{
-		date_default_timezone_set("UTC");
-	}
-		
-	$DateCurrent=time();
-	$DateUsed =   floor(($DateCurrent - $DateUpdated) / (24*60*60));
-	$DateTotal = ceil(($DateExpired - $DateUpdated) / (24*60*60));
-	*/
 
 	cm_close_connect($db);
 	
@@ -102,16 +98,29 @@ top_menu.style.color = "White";
 		</div>
 		<br/>
 		<div class="row">
-			<div class="col-md-4 col-md-offset-4">
-					<p><button class = "btn btn-lg btn-primary btn-block"   name = "add_new-client">Add New Client</button></p>
+			<div class="col-md-6 col-md-offset-5">
+					
+					<a href="#" class="btn btn-primary" 
+								data-toggle="modal" 
+								data-target="#addNewClientModal"
+								data-backdrop="static" data-keyboard="false">Add New Client</a>
+						
 			</div>
+			
 		</div>
-
- 
-
-
 
 <?php
 // do php stuff
 include('template/admin-footer.php');
 ?>
+
+<?php
+// do php stuff
+include('template/form-admin-add-client.php');
+?>
+
+<?php
+// do php stuff
+include('template/footer-common.php');
+?>
+

@@ -800,13 +800,3 @@ include('template/form-admin-upgrade-package.php');
 include('template/footer-common.php');
 ?>
 
-
-<Script>
-	
-	$( function() {
-		$( ".DatePicker" ).datepicker({
-			dateFormat: 'dd/mm/yy'
-		});
-	  } );
-
-</Script>

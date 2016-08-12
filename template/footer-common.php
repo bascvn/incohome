@@ -11,7 +11,12 @@
 		return seconds;
 	}
 
-	
+	$( function() {
+		$( ".DatePicker" ).datepicker({
+			dateFormat: 'dd/mm/yy'
+		});
+	 } );
+	  
 </Script>
 
 <div class="modal fade" id="md_warning" tabindex="-1" role="dialog" aria-labelledby="md_warning" aria-hidden="true">
