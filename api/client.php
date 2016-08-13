@@ -265,52 +265,126 @@ function upgrade(){
 			
 		if($result){
 			echo '{"status":200,"message":"ok"}';
+	
+			if($add_transaction)
+			{
+				$ClientPackageID  = 0;
+				
+				if($up_package>0){
+					$ClientPackageID = $up_package;
+					
+				}else if($add_gb >0){
+					$ClientPackageID = 5; 
+				}
+				
+				if($ClientPackageID >0){
+					
+					$query  = "SELECT * FROM `Package` WHERE PackageID = '$ClientPackageID'";
+					$result = mysqli_query($db, $query);
+					
+					$TrantractionSubtotal = 0;
+					$TrantractionDate =  time();
+					$PackageName = '';
+					
+					while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
+						$TrantractionSubtotal = $row['PackagePrice'];
+						$PackageName = $row['PackageName'];
+						break;
+					}
+					
+					$TrantractionDescription = "Buy ".$PackageName;
+						
+					if($add_gb >0){
+						$TrantractionDescription .=  ":  ".$add_gb;
+					}
+					
+					
+					$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
+					VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
+					$result = mysqli_query($db, $query);
+				}
+			}
 		}
 		else{
 			echo '{"status":404,"message":"Could not insert data"}';
 		}
 		
-		if($add_transaction)
-		{
-			$ClientPackageID  = 0;
+		
+		mysqli_close($db);
+	}
+	catch(Exception $e){
+		//echo $e;
+		echo '{"status":500,"message":"System Error"}';
+	}
+	
+}
+
+
+//======================================================================================
+function add_new(){
+	
+	try{
+		
+		
+		$NewClientName = $_POST['NewClientName'];
+		$NewClientCode = $_POST['NewClientCode'];
+		$PackageID = $_POST['PackageID'];
+		$AdminEmailID = $_POST['AdminEmailID'];
+		$NoreplyEmailID = $_POST['NoreplyEmailID'];
+		$fromDate = $_POST['fromDate'];
+		$toDate = $_POST['toDate'];
+		$add_transaction = strcmp($_POST['add_transaction'],'true')==0;
+		
+		$db     = cm_connect();
+		
+		$query  = "SELECT * FROM `Package` WHERE PackageID = '$PackageID'";
+		$result = mysqli_query($db, $query);
+		
+		$TrantractionSubtotal = 0;
+		$TrantractionDate =  time();
+		$PackageName = '';
+		$MaxUser = 5;
+		$MaxGB = 1;
+		
+		while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
+			$TrantractionSubtotal = $row['PackagePrice'];
+			$PackageName = $row['PackageName'];
+			$MaxUser = $row['MaxUser'];
+			$MaxGB = $row['MaxGB'];
+		
+			break;
+		}
+				
+	
+		$query  = "INSERT INTO `Client` (ClientName,ClientCode,PackageID,AdminEmailID,NoreplyEmailID,DateCreated,DateUpdated,DateExpired, MaxUser, MaxGB , DBName, DBUser )
+			VALUES('$NewClientName','$NewClientCode','$PackageID','$AdminEmailID','$NoreplyEmailID','$fromDate','$fromDate','$toDate', $MaxUser, $MaxGB, '$NewClientCode', '$NewClientCode' )";
+		$result = mysqli_query($db, $query);
+		
 			
-			if($up_package>0){
-				$ClientPackageID = $up_package;
-				
-			}else if($add_gb >0){
-				$ClientPackageID = 5; 
-			}
+		if($result){
+			echo '{"status":200,"message":"ok"}';
 			
-			if($ClientPackageID >0){
-				
-				$query  = "SELECT * FROM `Package` WHERE PackageID = '$ClientPackageID'";
-				$result = mysqli_query($db, $query);
-				
-				$TrantractionSubtotal = 0;
-				$TrantractionDate =  time();
-				$PackageName = '';
-				
-				while ($row = mysqli_fetch_array($result,MYSQL_ASSOC)) {
-					$TrantractionSubtotal = $row['PackagePrice'];
-					$PackageName = $row['PackageName'];
-					break;
-				}
-				
-				$TrantractionDescription = "Buy ".$PackageName;
-					
-				if($add_gb >0){
-					$TrantractionDescription .=  ":  ".$add_gb;
-				}
-				
+			if($add_transaction)
+			{
+				 $ClientID = mysqli_insert_id($db);
+				$TrantractionDescription = "Buy ".$PackageName;			
 				
 				$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
-				VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
+				VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$PackageID)";
 				$result = mysqli_query($db, $query);
+				
 			}
+		
+		}
+		else{
+			echo '{"status":404,"message":"Could not insert data"}';
 		}
 		
 		
+		
+		
 		mysqli_close($db);
+	
 	}
 	catch(Exception $e){
 		//echo $e;

@@ -16,7 +16,8 @@ include('template/admin-header.php');
    $query  = "SELECT `Client`.*,`Package`.PackageName, `AdEmail`.Email AS AdminEmail 
 			FROM `Client`,`Package`,`Email` AS `AdEmail`
 			WHERE `Client`.`RemovalFlag` = 0  AND `Package`.`PackageID` =  `Client`.`PackageID`
-			AND `AdEmail`.`EmailID` =  `Client`.`AdminEmailID`";
+			AND `AdEmail`.`EmailID` =  `Client`.`AdminEmailID`
+			ORDER BY `Client`.ClientCode";
 	
 	$result = mysqli_query($db, $query);
 	
@@ -40,6 +41,20 @@ include('template/admin-header.php');
 		array_push($package_data,$row);
 	}
 
+	
+	//get email list 
+	$query  = "SELECT `Email`.*
+			FROM `Email`
+			WHERE   `Email`.RemovalFlag = 0";
+	
+	//echo $query;
+	
+	$result = mysqli_query($db, $query);
+	$email_data   = array();        
+	while ($row = mysqli_fetch_array($result)) {
+		array_push($email_data,$row);
+	}
+	
 	cm_close_connect($db);
 	
 ?>
@@ -64,7 +79,7 @@ top_menu.style.color = "White";
 					<th >Tình Trạng</th>
 					<th >Contact Email</th>
 					<th >Admin Email</th>
-					<th >Detail</th>
+					<th >Action</th>
 					
 					</tr>
 					
@@ -74,7 +89,7 @@ top_menu.style.color = "White";
 						
 						echo "<tr><form  role='form' method='POST' action='admin-customer.php'>
 				
-								<td><input class='form-control' id='ClientCode' name='ClientID' value='".$row['ClientID']."'   readonly='readonly' ></td>
+								<td><input class='form-control' id='ClientID' name='ClientID' value='".$row['ClientID']."'   readonly='readonly' style='width:50px;' ></td>
 								<td><input class='form-control' id='ClientCode' name='ClientCode' value='".$row['ClientCode']."'   readonly='readonly' ></td>
 								<td>".$row['ClientName']."</td>
 								<td><div class='img-circle' style='width:100%; margin:0 auto; background-color: "
@@ -85,7 +100,8 @@ top_menu.style.color = "White";
 								<td>".$row['AdminEmail']."</td>
 								
 								<td> 
-									<button type='submit'  name='view_customer' class='btn btn-success'>View/Edit</button>
+									<button type='submit'  name='view_client' class='btn btn-success'>View/Edit</button>
+									<button type='submit'  name='delete_client' class='btn btn-danger' id='bt_delete_client' >Delete</button>
 								</td>
 							</form></tr>";
 						
@@ -108,6 +124,9 @@ top_menu.style.color = "White";
 			</div>
 			
 		</div>
+
+		
+		
 
 <?php
 // do php stuff

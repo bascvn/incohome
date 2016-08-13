@@ -139,8 +139,8 @@ tr:nth-child(even) {
 }
 
 .my-modal {
-  width:600px;
-  height:420px;
+  width:800px;
+  height:500px;
 
   .modal-header {
     background-color:#ccc;
@@ -153,7 +153,7 @@ tr:nth-child(even) {
 .my-modal-body {
     overflow-y: hidden;
     height: 100%;
-    max-height:400px;
+    max-height:460px;
  }
  
  

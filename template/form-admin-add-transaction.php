@@ -124,10 +124,8 @@ $TrantractionDate =  $dt->format('d/m/Y');
 		
 		var ClientID = '<?php echo $ClientID;?>';
 		
-		
-		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.send_upgrade_request"; 
-		//var post_uri  = "<?php echo cm_get_full_api_url("www", "client.add_transaction");?>"; 
-		var post_uri  = "http://localhost/inco/gateway.php?controller=client.add_transaction";
+		var post_uri  = "<?php echo cm_get_full_api_url("www", "client.add_transaction");?>"; 
+		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.add_transaction";
 		
 		$("#md_waiting").modal({backdrop: 'static', keyboard: false});
 		$.post(post_uri,

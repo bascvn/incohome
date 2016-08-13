@@ -176,8 +176,8 @@ $TrantractionDate =  $dt->format('d/m/Y');
 		
 		
 
-		//var post_uri  = "<?php echo cm_get_full_api_url("www", "client.add_transaction");?>"; 
-		var post_uri  = "http://localhost/inco/gateway.php?controller=client.upgrade";
+		var post_uri  = "<?php echo cm_get_full_api_url("www", "client.upgrade");?>"; 
+		//var post_uri  = "http://localhost/inco/gateway.php?controller=client.upgrade";
 		
 		$("#md_waiting").modal({backdrop: 'static', keyboard: false});
 		$.post(post_uri,

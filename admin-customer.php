@@ -44,6 +44,26 @@ include('template/admin-header.php');
   
    $db     = cm_connect();
    
+   //change values
+   if (isset($_POST["delete_client"])) {
+	   $ClientID = $_POST['ClientID'];
+	   
+	   $query  = "UPDATE `Client` SET 
+				 `Client`.RemovalFlag = 1 "
+				 ." WHERE `Client`.ClientID = '$ClientID'";
+		 
+		$result = mysqli_query($db, $query);
+		
+		/*
+		if($result){
+			$result_msg ='<div class="alert alert-success">Đã cập nhật thành công.</div>';
+		}else{
+			$result_msg ='<div class="alert alert-warning">Không thể cập nhật được.</div>';
+		*/
+
+		header("Location: admin-cus-list.php");
+		die();
+   }
    
    //change values
    if (isset($_POST["submit"])) {
@@ -79,6 +99,8 @@ include('template/admin-header.php');
 		
 		$Description = $_POST['Description']; 
 		$Status = $_POST['Status']; 
+		$BuildNumber = $_POST['BuildNumber']; 
+		
 		
 		$doUpdate = true;
 		$pass_hash = '';
@@ -127,6 +149,8 @@ include('template/admin-header.php');
 				.",`Client`.DBPassword = '$DBPassword'" 
 				.",`Client`.Description = '$Description'" 
 				.",`Client`.Status = '$Status'" 
+				.",`Client`.BuildNumber = '$BuildNumber'" 
+				
 			
 				 .(strlen($pass_hash)>0?"  ,`Client`.ContactPassword = '$pass_hash'  ":"" )
 				 ." WHERE `Client`.ClientID = '$ClientID'";
@@ -241,6 +265,8 @@ include('template/admin-header.php');
 		
 		$Description = $row['Description']; 
 		$Status = $row['Status']; 
+		$BuildNumber = $row['BuildNumber']; 
+		
 				
 	}
 	
@@ -650,6 +676,14 @@ include('template/admin-header.php');
 						<div class="col-sm-8">
 							
 							<input type="number" min="0" class="form-control" id="Status" name="Status" placeholder="0" value="<?php echo $Status; ?>">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="updatedate" class="col-sm-4 control-label">Build Number:</label>
+						<div class="col-sm-8">
+							
+							<input type="number" min="0" class="form-control" id="BuildNumber" name="BuildNumber" placeholder="0" value="<?php echo $BuildNumber; ?>">
 						</div>
 					</div>
 					
