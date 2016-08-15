@@ -69,12 +69,12 @@ include('template/admin-header.php');
    if (isset($_POST["submit"])) {
 		
 		
-		$ClientName = $_POST['ClientName'];
-		$ContactPhone = $_POST['ContactPhone'];
-		$ContactEmail = $_POST['ContactEmail'];
+		$ClientName = mysql_real_escape_string($_POST['ClientName']);
+		$ContactPhone = mysql_real_escape_string($_POST['ContactPhone']);
+		$ContactEmail = mysql_real_escape_string($_POST['ContactEmail']);
 		
-		$NewPassword = $_POST['NewPassword'];
-		$ReNewPassword = $_POST['ReNewPassword'];	
+		$NewPassword = mysql_real_escape_string($_POST['NewPassword']);
+		$ReNewPassword = mysql_real_escape_string($_POST['ReNewPassword']);	
 		
 		$DateCreated = $_POST['DateCreated'];
 		$DateCreatedObj = date_create_from_format("d/m/Y",$DateCreated);
@@ -93,11 +93,11 @@ include('template/admin-header.php');
 		$NoreplyEmailID =  $_POST['NoreplyEmailID'];
 		$AdminEmailID = $_POST['AdminEmailID'];
 		
-		$DBName = $_POST['DBName']; 
-		$DBUser = $_POST['DBUser']; 
-		$DBPassword = cm_encrypt($_POST['DBPassword']); 
+		$DBName = mysql_real_escape_string($_POST['DBName']); 
+		$DBUser = mysql_real_escape_string($_POST['DBUser']); 
+		$DBPassword = mysql_real_escape_string(cm_encrypt($_POST['DBPassword'])); 
 		
-		$Description = $_POST['Description']; 
+		$Description = mysql_real_escape_string($_POST['Description']); 
 		$Status = $_POST['Status']; 
 		$BuildNumber = $_POST['BuildNumber']; 
 		
@@ -168,7 +168,7 @@ include('template/admin-header.php');
    }
    else    if (isset($_POST["submit_change_payment"])) {
 	   $PaymentHistoryID =  $_POST['PaymentHistoryID']; 
-	   $PayDescription =  $_POST['PayDescription'];
+	   $PayDescription =  mysql_real_escape_string($_POST['PayDescription']);
 		$ClientPackageID =  $_POST['ClientPackageID'];
 		
 	   

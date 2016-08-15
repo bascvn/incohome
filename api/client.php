@@ -180,7 +180,7 @@ function add_transaction(){
 		$ClientID = $_POST['ClientID'];
 		$TrantractionDate = $_POST['TrantractionDate'];
 		$TrantractionSubtotal = $_POST['TrantractionSubtotal'];
-		$TrantractionDescription = $_POST['TrantractionDescription'];
+		$TrantractionDescription = mysql_real_escape_string($_POST['TrantractionDescription']);
 		$ClientPackageID = $_POST['ClientPackageID'];
 		
 		$db     = cm_connect();
@@ -326,8 +326,8 @@ function add_new(){
 	try{
 		
 		
-		$NewClientName = $_POST['NewClientName'];
-		$NewClientCode = $_POST['NewClientCode'];
+		$NewClientName = mysql_real_escape_string($_POST['NewClientName']);
+		$NewClientCode = mysql_real_escape_string($_POST['NewClientCode']);
 		$PackageID = $_POST['PackageID'];
 		$AdminEmailID = $_POST['AdminEmailID'];
 		$NoreplyEmailID = $_POST['NoreplyEmailID'];
