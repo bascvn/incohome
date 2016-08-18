@@ -15,7 +15,7 @@ include('template/admin-header.php');
   
    if (isset($_POST["submit"])) {
 		$EmailID = $_POST['EmailID'];
-		$Email = $_POST['Email'];
+		$Email = mysqli_real_escape_string($db,$_POST['Email']);
 		$Password = cm_encrypt($_POST['Password']);
 		$EmailType = $_POST['EmailType'];
 		

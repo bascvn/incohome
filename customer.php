@@ -34,12 +34,12 @@ include('template/header.php');
    //change values
    if (isset($_POST["submit"])) {
 		
-		$client_name = $_POST['client_name'];
-		$client_phone = $_POST['client_phone'];
-		$client_email = $_POST['client_email'];
-		$OldPassword = $_POST['OldPassword'];
-		$NewPassword = $_POST['NewPassword'];
-		$ReNewPassword = $_POST['ReNewPassword'];	
+		$client_name = mysqli_real_escape_string($db,$_POST['client_name']);
+		$client_phone = mysqli_real_escape_string($db,$_POST['client_phone']);
+		$client_email = mysqli_real_escape_string($db,$_POST['client_email']);
+		$OldPassword = mysqli_real_escape_string($db,$_POST['OldPassword']);
+		$NewPassword = mysqli_real_escape_string($db,$_POST['NewPassword']);
+		$ReNewPassword = mysqli_real_escape_string($db,$_POST['ReNewPassword']);	
 		
 		$doUpdate = true;
 		$pass_hash = '';

@@ -176,14 +176,14 @@ function get_client_staus(){
 function add_transaction(){
 	
 	try{
+		$db     = cm_connect();
 		
 		$ClientID = $_POST['ClientID'];
 		$TrantractionDate = $_POST['TrantractionDate'];
 		$TrantractionSubtotal = $_POST['TrantractionSubtotal'];
-		$TrantractionDescription = mysql_real_escape_string($_POST['TrantractionDescription']);
+		$TrantractionDescription = mysqli_real_escape_string($db,$_POST['TrantractionDescription']);
 		$ClientPackageID = $_POST['ClientPackageID'];
 		
-		$db     = cm_connect();
 		$query  = "INSERT INTO PaymentHistory(ClientID,DateTime,Subtotal,Description,PackageID) 
 		VALUES($ClientID,$TrantractionDate,$TrantractionSubtotal,'$TrantractionDescription',$ClientPackageID)";
 		$result = mysqli_query($db, $query);

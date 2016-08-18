@@ -15,8 +15,8 @@ include('template/admin-header.php');
   
    if (isset($_POST["submit"])) {
 		$UserID = $_POST['UserID'];
-		$UserEmail = $_POST['UserEmail'];
-		$UserPassword = $_POST['UserPassword'];
+		$UserEmail = mysqli_real_escape_string($db,$_POST['UserEmail']);
+		$UserPassword = mysqli_real_escape_string($db,$_POST['UserPassword']);
 		$UserRoleID = $_POST['UserRoleID'];
 		
 		

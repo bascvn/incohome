@@ -2,7 +2,7 @@
 
 $tz_name = "Asia/Ho_Chi_Minh";
 $tz = new DateTimeZone($tz_name);
-date_default_timezone_set($tz);   
+date_default_timezone_set($tz_name);   
 
 /*
 $dt = new DateTime();
