@@ -26,10 +26,10 @@
 	 define("INCO_DOMAIN", "kiemtraduan.net");  
 	 define("SUB_INCO_PATH", "");  
 	 define("HOST_OS", "linux");  
-	 define("SUPPORT_EMAIL", "support@bansac.vn"); // this is used for DEV
-	 define("FROM_EMAIL", "support@kiemtraduan.net"); // this is used for DEV 
-	 define("ROOT_SERVER_PATH", "/var/www/kiemtraduan.net/public_html/"); // this is used for DEV
-	 define("INCO_UPLOAD_PATH", "/uploads/"); // this is used for DEV
+	 define("SUPPORT_EMAIL", "support@bansac.vn"); 
+	 define("FROM_EMAIL", "support@kiemtraduan.net"); 
+	 define("ROOT_SERVER_PATH", "/var/www/kiemtraduan.net/public_html/"); 
+	 define("INCO_UPLOAD_PATH", "/uploads/");
 	 */
 	 
 	 
@@ -421,11 +421,12 @@ function cm_get_dir_size($path)
 		}
 	}else if(strcmp($os,"linux")==0){
 		
-		$io = popen ( '/usr/bin/db -sh ' . $path, 'r' );
+		$io = popen ( '/usr/bin/du -sb ' . $path, 'r' );
 		$size = fgets ( $io, 4096);
+
 		$Bsize = substr ( $size, 0, strpos ( $size, "\t" ) );
-		pclose ( $io );
-		//echo 'Directory: ' . $f . ' => Size: ' . $size;
+		pclose ( $io );	
+
 	}
 				
 	
