@@ -2,10 +2,15 @@
 
 $tz_name = "Asia/Ho_Chi_Minh";
 $tz = new DateTimeZone($tz_name);
-   
+date_default_timezone_set($tz);   
+
+/*
 $dt = new DateTime();
 $dt->setTimezone($tz);
 $TrantractionDate =  $dt->format('d/m/Y');
+*/
+$CurrentSeconds = time();
+$TrantractionDate = gmdate("d/m/Y", $CurrentSeconds);
 		
 ?>
 

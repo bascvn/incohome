@@ -2,17 +2,25 @@
 
 $tz_name = "Asia/Ho_Chi_Minh";
 $tz = new DateTimeZone($tz_name);
-   
+date_default_timezone_set($tz);   
+
+/*
 $dt = new DateTime();
 $dt->setTimezone($tz);
 $TrantractionDate =  $dt->format('d/m/Y');
+*/
+$CurrentSeconds = time();
+$TrantractionDate = gmdate("d/m/Y", $CurrentSeconds);
 
-$nextYear_seconds = time() + (366 * 24 * 60 * 60);
+$nextYear_seconds = $CurrentSeconds  + (366 * 24 * 60 * 60);
+
+/*
 $nextYear_str = date("c", $nextYear_seconds);
 $nextYear_datatime = new DateTime($nextYear_str);
 $nextYear_datatime->setTimezone($tz);
 $NextYearDate =  $nextYear_datatime->format('d/m/Y');
-		
+*/
+$NextYearDate =  gmdate("d/m/Y", $nextYear_seconds);		
 ?>
 
 

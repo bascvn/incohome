@@ -93,9 +93,9 @@ include('template/admin-header.php');
 		$NoreplyEmailID =  $_POST['NoreplyEmailID'];
 		$AdminEmailID = $_POST['AdminEmailID'];
 		
-		$DBName = mysql_real_escape_string($_POST['DBName']); 
-		$DBUser = mysql_real_escape_string($_POST['DBUser']); 
-		$DBPassword = mysql_real_escape_string(cm_encrypt($_POST['DBPassword'])); 
+		$DBName = $_POST['DBName']; 
+		$DBUser = $_POST['DBUser']; 
+		$DBPassword = cm_encrypt($_POST['DBPassword']); 
 		
 		$Description = mysql_real_escape_string($_POST['Description']); 
 		$Status = $_POST['Status']; 
@@ -225,28 +225,46 @@ include('template/admin-header.php');
 	//$data   = array();        
 	$found_client = false;
 	while ($row = mysqli_fetch_array($result)) {
+		
+		$found_client = true;
 		$ClientID =  $row['ClientID'];
 		 $ClientName = $row['ClientName'];
+		
+		 
 		 $ContactEmail =  $row['ContactEmail'];
 		 $ContactPhone = $row['ContactPhone'];
 		 $secondFromGMT = $row['GMT']; 
 		 
+		
+		date_default_timezone_set($tz);
 		$DateCreated_Col =  $row['DateCreated'];
+		$DateCreated = gmdate("d/m/Y", $DateCreated_Col);
+		
+		/*
 		$dt = new DateTime("@$DateCreated_Col");
 		$dt->setTimezone($tz);
 		$DateCreated =  $dt->format('d/m/Y');
+		*/
 		
-		$DateUpdated_Col =  $row['DateUpdated'];		
+		
+		$DateUpdated_Col =  $row['DateUpdated'];
+		$DateUpdated = gmdate("d/m/Y", $DateCreated_Col);		
+		/*
 		$dt = new DateTime("@$DateUpdated_Col");
 		$dt->setTimezone($tz);
 		$DateUpdated =  $dt->format('d/m/Y');
+		*/
 		 
 		//$DateExpired =  $row['DateExpired']; 
-		$DateExpired_Col =  $row['DateExpired'];		
+		$DateExpired_Col =  $row['DateExpired'];
+		$DateExpired = gmdate("d/m/Y", $DateExpired_Col);		
+		
+		/*		
 		$dt = new DateTime("@$DateExpired_Col");
 		$dt->setTimezone($tz);
 		$DateExpired =  $dt->format('d/m/Y');
-		
+		*/
+		 
 		 
 		 $MaxGB = $row['MaxGB']; 
 		 $MaxUser = $row['MaxUser']; 
@@ -270,6 +288,7 @@ include('template/admin-header.php');
 				
 	}
 	
+	
 	if(!$found_client){
 		$msg = 'Công ty đã hết hạn.';
 	}else{
@@ -285,6 +304,7 @@ include('template/admin-header.php');
 			date_default_timezone_set("UTC");
 		}
 	}
+	
 	
 	
 	$DateCurrent=time();
@@ -727,9 +747,14 @@ include('template/admin-header.php');
 						$row = $payment_data[$i];
 						
 						$PaymentDate_Col =  $row['DateTime'];
+						$PaymentDate = gmdate("d/m/Y", $PaymentDate_Col);
+		
+						/*
 						$dt = new DateTime("@$PaymentDate_Col");
 						$dt->setTimezone($tz);
 						$PaymentDate =  $dt->format('d/m/Y');
+						*/
+						
 						$PayDescription = $row['Description'];
 						$Subtotal =  $row['Subtotal'];
 						$Discount =  $row['Discount'];
